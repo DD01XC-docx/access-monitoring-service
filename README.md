@@ -18,8 +18,8 @@ This project focuses on security audit logging, access monitoring, and suspiciou
 
 ## Architecture
 
-- Backend: Java 17, Spring Boot 3 (Web, Spring Data JPA, Spring Security, AOP).
-- Database: PostgreSQL 15 with JSONB for event details and indexes for analytical queries.
+- Backend: Java 17, Spring Boot 4.0.1 (Web, Spring Data JPA, Spring Security, AOP).
+- Database: PostgreSQL 16 with JSONB for event details and indexes for analytical queries.
 - Frontend: Vanilla JavaScript, HTML5, CSS3 served as static assets.
 - Containerization: Docker + docker‑compose, multi‑stage builds, Nginx for frontend.
 - Integration: Optional `demo-app` that simulates a real client application sending events to the platform.
@@ -33,9 +33,9 @@ This project focuses on security audit logging, access monitoring, and suspiciou
 
 ## Tech Stack
 
-- **Backend:** Java 17, Spring Boot 3.x, Spring Web, Spring Data JPA, Spring Security, Lombok.
+- **Backend:** Java 17, Spring Boot 4.0.1, Spring Web, Spring Data JPA, Spring Security, Lombok.
 - **Database:** PostgreSQL 15 (JSONB, indexes, aggregation queries).
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript, Chart.js (or similar) for charts.
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript, Chart.js.
 - **Containerization:** Docker, docker‑compose.
 - **Version Control:** Git, GitHub.
 
