@@ -33,9 +33,9 @@ This project focuses on security audit logging, access monitoring, and suspiciou
 
 ## Tech Stack
 
-- **Backend:** Java 17, Spring Boot 3.x, Spring Web, Spring Data JPA, Spring Security, Lombok.
-- **Database:** PostgreSQL 15 (JSONB, indexes, aggregation queries).
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript, Chart.js (or similar) for charts.
+- **Backend:** Java 17, Spring Boot 4.1, Spring Web, Spring Data JPA, Spring Security, Lombok.
+- **Database:** PostgreSQL 16 (JSONB, indexes, aggregation queries).
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript, Chart.js.
 - **Containerization:** Docker, docker‑compose.
 - **Version Control:** Git, GitHub.
 
