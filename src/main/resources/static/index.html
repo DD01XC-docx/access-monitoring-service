@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="/frontend/styles/startstyle.css">
 </head>
 <body>
+    <svg style="display:none">
+        <symbol id="arrow-down-icon-menu" viewBox="0 0 512 512">
+            <g fill="currentColor" stroke="none">
+                <path d="M112 184l144 144 144-144" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="48" 
+                stroke-linecap="round" 
+                stroke-linejoin="round">
+            </g>
+        </symbol>
+    </svg>
     <script src="/frontend/scripts/startscript.js"></script>
     <header id="header">
         <section>
@@ -55,51 +67,71 @@
                     <ul id="main-menu" class="navbar-nav">
                         <li id="main-menu-item-1" class="dropdown menu-item-main">
                             <a class="dropdown-toggle">
-                                <svg>
-                                    <use></use>
+                                <svg width="24" height="24">
+                                    <use href="#arrow-down-icon-menu"></use>
                                 </svg>
                             </a>
                             <ul class="dropdown-menu"></ul>
                         </li>
                         <li id="main-menu-item-2" class="dropdow nmenu-item-main">
                             <a class="dropdown-toggle">
-                                <svg>
-                                    <use></use>
+                                <span>Example</span>
+                               <svg width="24" height="24">
+                                    <use href="#arrow-down-icon-menu"></use>
                                 </svg>
                             </a>
                             <ul class="dropdown-menu"></ul>
                         </li>
                         <li id="main-menu-item-3" class="dropdown menu-item-main">
                             <a class="dropdown-toggle">
-                                <svg>
-                                    <use></use>
+                                <span>Example</span>
+                                <svg width="24" height="24">
+                                    <use href="#arrow-down-icon-menu"></use>
                                 </svg>
                             </a>
                             <ul class="dropdown-menu"></ul>
                         </li>
                         <li id="main-menu-item-4" class="dropdown men u-item-main">
                             <a class="dropdown-toggle">
-                                <svg>
-                                    <use></use>
+                                <span>Example</span>
+                                <svg width="24" height="24">
+                                    <use href="#arrow-down-icon-menu"></use>
                                 </svg>
                             </a>
                             <ul class="dropdown-menu"></ul>
                         </li>
                         <li id="main-menu-item-5" class="menu-item-main"></li>
                         <li id="main-menu-item-6" class="menu-item-main"></li>
-                        <li id="main-menu-item-7b" class="login menu-item-main"></li>
-                        <li id="main-menu-item-8b" class="intall menu-item-main"></li>
+                        <li id="main-menu-item-7b" class="login menu-item-main">
+                            <a target="_blank" href="/src/main/resources/static/login.html" class="btn-loggin-linear-g">Log in</a>
+                        </li>
+                        <li id="main-menu-item-8b" class="intall menu-item-main">
+                            <a target="_blank" href="/src/main/resources/static/install.html" class="btn-install-linear-g">Install</a>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div>
-
-            </div>
         </section>
-        
     </header>
-    <main>
+    <main id="home">
+        <section id="intro">
+        
+        </section>
+        <section id="benefits">
 
+        </section>
+        <section id="about">
+
+        </section>
+        <section id="partners">
+
+        </section>
+        <section id="services">
+
+        </section>
+        <section id="cta-section">
+
+        </section>
     </main>
     <footer>
 
