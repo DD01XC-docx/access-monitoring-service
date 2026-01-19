@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start</title>
-    <link rel="stylesheet" href="/frontend/styles/startstyle.css">
+    <link rel="stylesheet" href="frontend/styles/startstyle.css">
 </head>
 <body>
     <svg style="display:none">
@@ -20,7 +20,7 @@
         </symbol>
     </svg>
     <script src="/frontend/scripts/startscript.js"></script>
-    <header id="header">
+    <header id="header" class="generally-nav-panel">
         <section>
             <div class="nav-top">
                 <div class="container">
@@ -48,10 +48,10 @@
                         <form method="get" action="">
                             <div class="search-input-wrapper-container">
                                 <div class="search-input-wrapper">
-                                    <label aria-label="Search here">
+                                    <label id="label-search" aria-label="Search here">
                                         <span class="visually-hiden">Search here</span>
                                         <input type="text" autocomplete="off" class="form-control" name="se" placeholder="Search">
-                                        <button type="submit"><svg width="40" height="40">
+                                        <button id="search-b" type="submit"><svg width="20" height="12">
                                             <use xlink:href="#search-header"></use>
                                         </svg></button>
                                     </label>
@@ -102,10 +102,10 @@
                         </li>
                         <li id="main-menu-item-5" class="menu-item-main"></li>
                         <li id="main-menu-item-6" class="menu-item-main"></li>
-                        <li id="main-menu-item-7b" class="login menu-item-main">
+                        <li id="main-menu-item-7b" class="login-menu-item-main">
                             <a target="_blank" href="/src/main/resources/static/login.html" class="btn-loggin-linear-g">Log in</a>
                         </li>
-                        <li id="main-menu-item-8b" class="intall menu-item-main">
+                        <li id="main-menu-item-8b" class="intall-menu-item-main">
                             <a target="_blank" href="/src/main/resources/static/install.html" class="btn-install-linear-g">Install</a>
                         </li>
                     </ul>

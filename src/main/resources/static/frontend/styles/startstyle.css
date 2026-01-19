@@ -1,0 +1,148 @@
+:root {
+  /* Фон и поверхности */
+  --bg-dark: #182c5a;
+  --bg-light: #2c3544;
+  --bg-card: #1e293b;  
+
+  /* Текст */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  
+  /* Акцент (выберите один) */
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  
+  /* Статусы (для мониторинга) */
+  --success: #10b981;
+  --warning: #f59e0b;   
+}
+
+body {
+background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark) 100%);
+  background-attachment: fixed;
+  min-height: 100px;
+  margin: 0;
+}
+
+#navigation {
+    display:block;
+}
+.nav-top{
+    display:flex;
+    justify-content:space-between;
+    margin: auto;
+    max-height: 35px;
+    padding:10px;
+    padding-bottom:40px;
+    margin: 5px;
+    background-color:var(--bg-card);
+}   
+.nav-main {
+    display:flex;
+}
+.nav-bar {
+    display:flex;
+}
+#main-menu {
+    display:flex;
+    align-items:center;
+    min-width:400px;
+    
+}
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    height: 60px;
+}
+.nav, #menu-sentrum-community-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 20px;
+}
+#buttons-install-loggin {
+    display: flex;
+    gap: 10px;
+    align-items:center;
+    margin:60px;
+}
+#main-menu-item-7b, #main-menu-item-8b {
+    position:flex;
+    margin:15px;
+    border:0.5px solid;
+    padding: 10px;
+    background-color: var(--bg-card);
+}
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    max-width: 200px;      /* <–– ограничиваем общую ширину */
+    padding: 1px 50px;
+    justify-content:space-around;
+}
+.label-search {
+    justify-content:space-between;
+    align-items:center;
+}
+#search-b {
+    position:absolute;
+    right: 40px;
+    top: 17px;
+}
+.search-input-wrapper:focus-within {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+.form-control {
+  flex: 1;
+  min-width: 0;          /* важно, чтобы input сжимался */
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff   ;   /* чуть меньше, чем было */
+  font-size: 0.85rem;
+}
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+.visually-hiden {
+    display:none;
+}
+.search-input-wrapper button {
+    background: transparent;
+    border: solid;
+    cursor: pointer;
+    display: block;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0.6;
+    transition: 0.3s;
+}
+
+.search-block {
+    display: flex;
+    gap: 20px;
+}
+ul {
+    list-style:none;
+    margin: 0;
+    padding : 0;
+}
+a {
+    text-decoration: none;
+    color: var(--text-main);
+    transition: 0.3s;
+}
+a:hover {
+    color: var(--accent);
+}
