@@ -30,6 +30,7 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
 .nav-top{
     display:flex;
     justify-content:space-between;
+    align-content:center;
     margin: auto;
     max-height: 35px;
     padding:10px;
@@ -48,6 +49,19 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     align-items:center;
     min-width:400px;
     
+}
+.nav-brand {
+    height:100px;
+    width:100px;
+    justify-content:center;
+    align-items:center;
+    padding:2px;
+    margin-top:8px; 
+}
+#menu-left-above {
+    gap: 40px;
+    margin-bottom: 15px;
+    margin-left: 30px;
 }
 .container {
     display: flex;
@@ -114,7 +128,7 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
 .form-control::placeholder {
     color: rgba(255, 255, 255, 0.4);
 }
-.visually-hiden {
+.visually-hidden {
     display:none;
 }
 .search-input-wrapper button {
