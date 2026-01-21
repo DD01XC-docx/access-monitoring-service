@@ -77,14 +77,11 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     padding: 0;
     gap: 20px;
 }
-/* ссылка‑триггер */
 .dropdown-toggle {
     display: inline-flex;
     align-items: center;
     gap: 4px;
 }
-
-/* выпадающее меню по умолчанию скрыто */
 .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -92,7 +89,7 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     min-width: 180px;
     padding: 8px 0;
     margin-top: 8px;
-    background: #02061780;
+    background: #020617;
     border-radius: 8px;
     box-shadow: 0 16px 40px rgba(0,0,0,0.6);
     border: 2px solid #000000;
@@ -104,7 +101,7 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     z-index: 100;
 
 }
-.dropdown-menu:hover {
+.dropdown-menu:hover{
     background: rgba(255, 255, 255, 0.12);
     border-color: var(--accent);
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
@@ -122,6 +119,10 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     font-size: 0.9rem;
     color: #e5e7eb;
     white-space: nowrap;
+}
+
+.dropdown-menu li:hover {
+    background: #111827;
 }
 
 /* стрелка */
@@ -263,7 +264,8 @@ a:hover {
     align-items: center;
     gap: 40px;
     color: white;
-    border: none;        
+    border: none;   
+    margin-bottom: 30px;     
 }    
 .btn-install-linear-g {
     background: #ffcc00; 
@@ -302,6 +304,8 @@ a:hover {
     height: auto;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    background: transparent;
+    overflow:hidden;
 }
 .hero-video video {
     transform: scale(1);
@@ -324,4 +328,49 @@ a:hover {
     max-width: 520px;
     color: #d0d6e5;      
     margin-bottom: 12px;
+}
+
+.metrics-inner {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    max-width: 960px;
+    margin: auto;
+    padding: 0 24px; 
+    align-items:center;
+    
+}
+.metric-item {
+    padding: 20px 22px;
+    border-radius: 18px;
+    border: 1px solid #1f2937;
+    background: radial-gradient(circle at 0 0, #1b335c33 0, #192559 60%);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+    text-align: left;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 100px;
+}
+.metric-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 70px rgba(0, 0, 0, 0.267);
+    border-color: #2563eb;
+}
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color:var(--accent);
+}
+.metric-text {
+    font-size: 0.9rem;
+    color: #d1d5db;
+    max-width: 260px;
 }
