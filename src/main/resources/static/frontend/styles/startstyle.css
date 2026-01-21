@@ -1,7 +1,9 @@
 :root {
   /* Фон и поверхности */
-  --bg-dark: #182c5a;
-  --bg-light: #2c3544;
+  --bg-top: rgba(0, 0, 0, 0.342);
+  --bg-second-top: #09061e2e;
+  --bg-dark: #2f343e;
+  --bg-light: #21304b;
   --bg-card: #1e293b;  
 
   /* Текст */
@@ -36,10 +38,13 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     padding:10px;
     padding-bottom:40px;
     margin: 5px;
-    background-color:var(--bg-card);
+    background-color:var(--bg-top);
+    border: solid;
+    border-radius: 8px;
 }   
 .nav-main {
     display:flex;
+    background-color:var(--bg-second-top);
 }
 .nav-bar {
     display:flex;
@@ -48,6 +53,10 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     display:flex;
     align-items:center;
     min-width:400px;
+    gap: 35px;
+}
+#buttons-menu-container {
+    display: flex;
     
 }
 .nav-brand {
@@ -84,12 +93,13 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     align-items:center;
     margin:60px;
 }
-#main-menu-item-7b, #main-menu-item-8b {
-    position:flex;
-    margin:15px;
-    border:0.5px solid;
-    padding: 10px;
-    background-color: var(--bg-card);
+#main-menu-item-7b, #main-menu-item-8b{
+    margin:5px;
+}
+.btn-loggin-linear-g, .btn-install-linear-g {
+    align-items:center;
+    justify-content:center;
+    text-align:center;
 }
 .search-input-wrapper {
     display: flex;
@@ -159,4 +169,60 @@ a {
 }
 a:hover {
     color: var(--accent);
+}
+#intro {
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 400px;
+    min-width: 100%;
+    margin-top: 10px;
+    justify-content:space-between;
+}
+#out-container {
+    background-color: #1a2b4a; /* Тот самый темно-синий цвет */
+    border-radius: 40px;       /* Скругление, которое вы уже добавили */
+    padding: 60px;             /* Внутренние отступы, чтобы текст не лип к краям */
+    margin: 20px auto;         /* Центрируем сам контейнер на странице */
+    margin-left: 30px;
+    justify-content:space-between;
+    max-width: 1200px;         /* Ограничиваем ширину, чтобы блок не растягивался слишком сильно */
+    display: flex;             /* Включаем гибкую верстку */
+    align-items: center;       /* Выравниваем текст и картинку по вертикали */
+    gap: 40px;                 /* Расстояние между текстом и картинкой */
+    color: white;              /* Цвет текста внутри блока */
+    border: none;              /* Убираем черную рамку (border: solid) */
+}
+.btn-install-linear-g {
+    background: #ffcc00; 
+    color: black; 
+    border-radius: 8px; 
+    padding: 12px 24px;
+}
+.btn-loggin-linear-g {
+    border: 1px solid white; 
+    border-radius: 8px; 
+    padding: 12px 24px; 
+    margin-left: 15px;
+}
+.hero-text {
+    width: 45%;
+    flex: 1;
+}
+.hero-text h1:hover {
+    color: var(--accent);
+    transition: 0.5s;
+}
+.hero-text p:hover {
+    color: var(--accent);
+    transition: 0.5s;
+}
+.hero-video {
+    width:40%;
+}
+.dashboard-video {
+    flex: 1.2;
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }

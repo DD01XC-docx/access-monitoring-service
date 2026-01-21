@@ -79,6 +79,7 @@
                     <ul id="main-menu" class="navbar-nav">
                         <li id="main-menu-item-1" class="dropdown menu-item-main">
                             <a class="dropdown-toggle">
+                                <span>Example</span>    
                                 <svg width="24" height="24">
                                     <use href="#arrow-down-icon-menu"></use>
                                 </svg>
@@ -114,6 +115,8 @@
                         </li>
                         <li id="main-menu-item-5" class="menu-item-main"></li>
                         <li id="main-menu-item-6" class="menu-item-main"></li>
+                    </ul>
+                    <ul id="buttons-menu-container">
                         <li id="main-menu-item-7b" class="login-menu-item-main">
                             <a target="_blank" href="/src/main/resources/static/login.html" class="btn-loggin-linear-g">Log in</a>
                         </li>
@@ -127,7 +130,23 @@
     </header>
     <main id="home">
         <section id="intro">
-        
+            <div id="out-container">
+                <div class="hero-text">
+                    <h1 style="font-size: 48px; margin-bottom: 20px;">The Open Source Security Platform</h1>
+                    <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">
+                        Unified XDR and SIEM protection for endpoints and cloud workloads.
+                    </p>
+                <div class="hero-buttons">
+                    <a href="#" id="btn-install-hero" class="btn-install-linear-g">Install Local Version</a>
+                    <a href="#" id="btn-trual-hero" class="btn-loggin-linear-g">Free Cloud Trial</a>
+                </div>
+            </div>
+
+            <div class="hero-video">
+                <video autoplay loop muted playsinline class="dashboard-video">
+                    <source src="/src/main/resources/static/frontend/images/313877bf29b8434b808c8aaad3f89a21.mp4" type="video/mp4">
+                </video>
+            </div>>
         </section>
         <section id="benefits">
 
