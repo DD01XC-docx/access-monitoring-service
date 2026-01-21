@@ -1,20 +1,13 @@
 :root {
-  /* Фон и поверхности */
   --bg-top: rgba(0, 0, 0, 0.342);
   --bg-second-top: #09061e2e;
   --bg-dark: #2f343e;
   --bg-light: #21304b;
   --bg-card: #1e293b;  
-
-  /* Текст */
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  
-  /* Акцент (выберите один) */
   --accent: #3b82f6;
   --accent-hover: #2563eb;
-  
-  /* Статусы (для мониторинга) */
   --success: #10b981;
   --warning: #f59e0b;   
 }
@@ -37,10 +30,7 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     max-height: 35px;
     padding:10px;
     padding-bottom:40px;
-    margin: 5px;
     background-color:var(--bg-top);
-    border: solid;
-    border-radius: 8px;
 }   
 .nav-main {
     display:flex;
@@ -87,6 +77,65 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     padding: 0;
     gap: 20px;
 }
+/* ссылка‑триггер */
+.dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* выпадающее меню по умолчанию скрыто */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    padding: 8px 0;
+    margin-top: 8px;
+    background: #02061780;
+    border-radius: 8px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+    border: 2px solid #000000;
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: 0.2s ease;
+    z-index: 100;
+
+}
+.dropdown-menu:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+/* показываем меню, когда наведен li */
+.menu-item-main:hover > .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* пункты меню */
+.dropdown-menu li {
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    white-space: nowrap;
+}
+
+/* стрелка */
+.nav-arrow {
+    display: inline-block;
+    margin-left: 4px;
+    transition: transform 0.25s ease;
+    transform-origin: center;
+}
+
+/* вращение стрелки */
+.menu-item-main:hover .nav-arrow {
+    transform: rotate(180deg);
+}
 #buttons-install-loggin {
     display: flex;
     gap: 10px;
@@ -95,6 +144,13 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
 }
 #main-menu-item-7b, #main-menu-item-8b{
     margin:5px;
+}
+.menu-item-main {
+    position: relative;
+}
+#main-menu-item-7b.hover, #main-menu-item-8b:hover {
+    border-color:var(--accent);
+    transition:0.5s;
 }
 .btn-loggin-linear-g, .btn-install-linear-g {
     align-items:center;
@@ -108,9 +164,10 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50px;
     transition: all 0.3s ease;
-    max-width: 200px;      /* <–– ограничиваем общую ширину */
+    max-width: 200px;
     padding: 1px 50px;
     justify-content:space-around;
+    height: 60px;
 }
 .label-search {
     justify-content:space-between;
@@ -128,12 +185,12 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
 }
 .form-control {
   flex: 1;
-  min-width: 0;          /* важно, чтобы input сжимался */
+  min-width: 0;
   border: none;
   outline: none;
   background: transparent;
-  color: #fff   ;   /* чуть меньше, чем было */
-  font-size: 0.85rem;
+  color: #fff;
+  font-size: 0.9rem;
 }
 .form-control::placeholder {
     color: rgba(255, 255, 255, 0.4);
@@ -143,7 +200,6 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
 }
 .search-input-wrapper button {
     background: transparent;
-    border: solid;
     cursor: pointer;
     display: block;
     align-items: center;
@@ -151,6 +207,17 @@ background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark)
     padding: 0;
     opacity: 0.6;
     transition: 0.3s;
+    width: 50px;
+    height:50px;
+    appearance: none;
+    border: none;
+    outline: none;
+    margin-top:5px;
+    color: white;
+}
+.search-input-wrapper button:hover{
+    color: var(--accent-hover);
+    transition: 0.5s;
 }
 
 .search-block {
@@ -179,19 +246,25 @@ a:hover {
     justify-content:space-between;
 }
 #out-container {
-    background-color: #1a2b4a; /* Тот самый темно-синий цвет */
-    border-radius: 40px;       /* Скругление, которое вы уже добавили */
-    padding: 60px;             /* Внутренние отступы, чтобы текст не лип к краям */
-    margin: 20px auto;         /* Центрируем сам контейнер на странице */
+        background: radial-gradient(
+        circle at 30% 20%,
+        #1b335c 0%,
+        #0c182981 40%,
+        #1a2d66 80%,
+        #02051268 100%
+        );
+    border-radius: 40px;
+    padding: 60px;
+    margin: 20px;
     margin-left: 30px;
     justify-content:space-between;
-    max-width: 1200px;         /* Ограничиваем ширину, чтобы блок не растягивался слишком сильно */
-    display: flex;             /* Включаем гибкую верстку */
-    align-items: center;       /* Выравниваем текст и картинку по вертикали */
-    gap: 40px;                 /* Расстояние между текстом и картинкой */
-    color: white;              /* Цвет текста внутри блока */
-    border: none;              /* Убираем черную рамку (border: solid) */
-}
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    color: white;
+    border: none;        
+}    
 .btn-install-linear-g {
     background: #ffcc00; 
     color: black; 
@@ -205,16 +278,20 @@ a:hover {
     margin-left: 15px;
 }
 .hero-text {
-    width: 45%;
+    width: 50%;
     flex: 1;
+    align-self: flex-start; 
+    padding-top: 40px;
 }
-.hero-text h1:hover {
-    color: var(--accent);
-    transition: 0.5s;
+.hero-text h1 {
+    font-size: 3.1rem;
+    line-height:1.1;
+    margin-bottom: 16px;
 }
-.hero-text p:hover {
-    color: var(--accent);
-    transition: 0.5s;
+#btn-install-hero:hover, #btn-tryal-hero:hover {
+    border: solid;
+    border-color:#3b82f6;
+    background:transparent;
 }
 .hero-video {
     width:40%;
@@ -228,9 +305,23 @@ a:hover {
 }
 .hero-video video {
     transform: scale(1);
-    transition:1s ease;
+    transition:0.7s ease;
 }
 .hero-video video:hover {
-    transform: scale(1.10);
-    transition:0.7s ease;
+    transform: scale(1.05);
+    transition:0.3s ease;
+}
+#nocredit {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #b5bed4;
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+.hero-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 520px;
+    color: #d0d6e5;      
+    margin-bottom: 12px;
 }
