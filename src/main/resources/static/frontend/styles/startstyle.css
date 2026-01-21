@@ -329,7 +329,9 @@ a:hover {
     color: #d0d6e5;      
     margin-bottom: 12px;
 }
-
+#metrics {
+    min-height: 280px;
+}
 .metrics-inner {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -341,7 +343,7 @@ a:hover {
     
 }
 .metric-item {
-    padding: 20px 22px;
+    padding: 30px 22px;
     border-radius: 18px;
     border: 1px solid #1f2937;
     background: radial-gradient(circle at 0 0, #1b335c33 0, #192559 60%);
@@ -350,7 +352,7 @@ a:hover {
     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     box-sizing: border-box;
     width: 100%;
-    margin-bottom: 100px;
+    margin-top:20px;
 }
 .metric-item:hover {
     transform: translateY(-4px);
@@ -373,4 +375,121 @@ a:hover {
     font-size: 0.9rem;
     color: #d1d5db;
     max-width: 260px;
+}
+
+.feature-highlight {
+    background: transparent; /* или твой основной фон */
+}
+
+.feature-card {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    border-radius: 24px;
+    border: 1px solid #1f2937;
+    background: transparent;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+}
+
+.feature-content {
+    padding:15px;
+}
+.feature-media img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.7);
+}
+
+.feature-content h2 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.feature-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #d1d5db;
+    margin-bottom: 8px;
+}
+.feature-content:hover {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+    border: solid 1px;
+    border-radius:20px;
+    border-color: var(--accent);
+    transition: 0.7s;
+}
+
+.feature-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.feature-link-arrow {
+    transition: transform 0.2s ease;
+}
+
+.feature-link:hover .feature-link-arrow {
+    transform: translateX(3px);
+}
+
+
+
+
+
+
+.about{
+    padding: 80px 0;
+    background: #0b218589; /* или продолжение градиента снизу */
+}
+.about-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 2fr 1.2fr;
+    gap: 48px;
+    align-items: start;
+}
+.about-text h2 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+.about-text p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #d1d5db;
+    max-width: 620px;
+    margin-bottom: 10px;
+}
+.about-facts {
+    display: grid;
+    gap: 12px;
+}
+.about-fact {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+    background: radial-gradient(circle at 0 0, #1b335c33 0, #020617 60%);
+}
+.about-fact-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+}
+.about-fact-value {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.95rem;
 }
