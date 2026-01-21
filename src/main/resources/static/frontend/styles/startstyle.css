@@ -226,3 +226,11 @@ a:hover {
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
+.hero-video video {
+    transform: scale(1);
+    transition:1s ease;
+}
+.hero-video video:hover {
+    transform: scale(1.10);
+    transition:0.7s ease;
+}
