@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start</title>
+    <link rel="stylesheet" href="frontend/styles/startstyle.css">
+</head>
+<body>
+    <svg style="display:none">
+        <symbol id="arrow-down-icon-menu" viewBox="0 0 512 512">
+            <g fill="currentColor" stroke="none">
+                <path d="M112 184l144 144 144-144" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="48" 
+                stroke-linecap="round" 
+                stroke-linejoin="round">
+            </g>
+        </symbol>
+    </svg>
+    <script src="/frontend/scripts/startscript.js"></script>
+    <header id="header" class="generally-nav-panel">
+        <section>
+            <div class="nav-top">
+                <div id="block-top-left" class="container">
+                    <a class="nav-brand" href="">
+                        <span class="visually-hidden">Go home</span>
+                        <div style="max-width:80px; max-height:80px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M11 2.04935V13H21.9506C21.4489 18.0533 
+                                                17.1853 22 12 22C6.47715 22 2 17.5228 2 12C2 
+                                                6.81462 5.94668 2.55107 11 2.04935ZM13 0.542847C18.5535 
+                                                1.02121 22.9788 5.4465 23.4571 11H13V0.542847Z">
+                                        </path>
+                                    </svg>
+                                </div>
+                    </a>
+                    <nav>
+                        <ul id="menu-left-above" class="nav">
+                            <li id="menu-item-1" class="item-menu menu-item-type-post">
+                                <a href="">Documentation</a>
+                            </li>
+                            <li id="menu-item-2" class="item-menu menu-item-type-post">
+                                <a href="">CTI</a>
+                            </li>
+                             <li id="menu-item-3" class="item-menu menu-item-type-post">
+                                <a href="">Cloud</a>
+                            </li>
+                             <li id="menu-item-4" class="item-menu menu-item-type-post">
+                                <a href="">Contact us</a>
+                            </li>
+                        </ul>
+                        <ul id="menu-sentrum-community-links" class="nav">
+                        </ul>
+                    </nav>
+                </div>
+                <div id="desktop-search-input">
+                    <div class="header-search collapsed">
+                        <form method="get" action="">
+                            <div class="search-input-wrapper-container">
+                                <div class="search-input-wrapper">
+                                    <label id="label-search" aria-label="Search here">
+                                        <span class="visually-hidden">Search here</span>
+                                        <input type="text" autocomplete="off" class="form-control" name="se" placeholder="Search">
+                                        <button id="search-b" type="submit"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 
+                                            18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 
+                                            6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 
+                                            16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 
+                                            14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 
+                                            18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
+                                        </svg>
+                                        </button>
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>  
+            </div>
+            <div class="nav-main container">
+                <div class="nav-brand"></div>
+                    <div class="nav-bar collapse">
+                        <ul id="main-menu" class="navbar-nav">
+                            <li id="main-menu-item-1" class="dropdown menu-item-main">
+                                <a class="dropdown-toggle" target="_blank" href="">
+                                    <span>Services</span>    
+                                    <svg width="24" height="24" class="nav-arrow">
+                                        <use href="#arrow-down-icon-menu"></use>
+                                    </svg>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a target="_blank" href="">Professional support</a></li>
+                                    <li><a target="_blank" href="">Consulting services</a></li>
+                                    <li><a target="_blank" href="">Training courses</a></li>
+                                </ul>
+                            </li>
+                            <li id="main-menu-item-2" class="dropdown menu-item-main">
+                                <a class="dropdown-toggle" target="_blank" href="">
+                                    <span>Partners</span>
+                                    <svg width="24" height="24" class="nav-arrow">
+                                        <use href="#arrow-down-icon-menu"></use>
+                                    </svg>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a target="_blank" href="">Become a partner</a></li>
+                                    <li><a target="_blank" href="">About ours partners</a></li>
+                                </ul>
+                            </li>
+                            <li id="main-menu-item-3" class="dropdown menu-item-main">
+                            <a class="dropdown-toggle" target="_blank" href="">
+                                <span>Company</span>
+                                <svg width="24" height="24" class="nav-arrow">
+                                    <use href="#arrow-down-icon-menu"></use>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a target="_blank" href="">Customers</a></li>
+                                <li><a target="_blank" href="">About us</a></li>
+                                <li><a target="_blank" href="">Our team</a></li>
+                                <li><a target="_blank" href="">Resources</a></li>
+                            </ul>
+                        </li>
+                        <li id="main-menu-item-4" class="dropdown menu-item-main">
+                            <a class="dropdown-toggle" target="_blank" href="">
+                                <span>Platform</span>
+                                <svg width="24" height="24" class="nav-arrow">
+                                    <use href="#arrow-down-icon-menu"></use>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a target="_blank" href="">Overview</a></li>
+                                <li><a target="_blank" href="">XDR</a></li>
+                                <li><a target="_blank" href="">SIEN</a></li>
+                            </ul>
+                        </li>
+                        <li id="main-menu-item-5" class="menu-item-main"></li>
+                        <li id="main-menu-item-6" class="menu-item-main"></li>
+                    </ul>
+                    <ul id="buttons-menu-container">
+                        <li id="main-menu-item-7b" class="login-menu-item-main">
+                            <a target="_blank" href="/src/main/resources/static/login.html" class="btn-loggin-linear-g">Log in</a>
+                        </li>
+                        <li id="main-menu-item-8b" class="intall-menu-item-main">
+                            <a target="_blank" href="/src/main/resources/static/signup.html" class="btn-install-linear-g">Sign up</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </header>
+    <main id="home">
+        <section id="intro">
+            <div id="out-container">
+                <div class="hero-text">
+                    <h1 style="font-size: 48px; margin-bottom: px;">The Open Source Security Platform</h1>
+                    <p class="hero-subtitle" style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">
+                        Detect, investigate and stop threats across endpoints and cloud in minutes.
+                    </p>
+                    <p id="nocredit">No credit card required. Deploy in under 5 minutes.</p>
+                <div class="hero-buttons">
+                    <a href="#" id="btn-install-hero" class="btn-install-linear-g">Install Self-Hosted</a>
+                    <a href="#" id="btn-tryal-hero" class="btn-loggin-linear-g">Start Free Cloud Trial</a>
+                </div>
+            </div>
+
+            <div class="hero-video">
+                <video autoplay loop muted playsinline class="dashboard-video">
+                    <source src="/src/main/resources/static/frontend/images/9883d068020560650ff9d4db8c9148da.mp4" type="video/mp4">
+                </video>
+            </div>
+        </section>
+        <section id="metrics">
+            <div class="container metrics-inner">
+                <div class="metric-item">
+                    <div class="metric-value">↓ 40%</div>
+                    <div class="metric-label">Faster response</div>
+                    <p class="metric-text">
+                        Cut mean time to respond by automating investigation workflows.
+                    </p>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">×10</div>
+                    <div class="metric-label">Less alert noise</div>
+                    <p class="metric-text">
+                        Correlate noisy alerts into a few prioritized incidents.
+                    </p>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">Full stack</div>
+                    <div class="metric-label">Unified visibility</div>
+                    <p class="metric-text">
+                        Monitor endpoints, cloud workloads and identities in one place.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-highlight">
+            <div class="feature-card">
+                <div class="feature-media">
+                <img src="/src/main/resources/static/frontend/images/cybersecurity-risk-and-incident-management-dashboard.png" alt="Incident dashboard">
+                </div>
+
+                <div class="feature-content">
+                <h2>Active XDR protection<br>from modern threats</h2>
+                <p>
+                    Seerlogg provides analysts with real-time correlation and context
+                    across endpoints and cloud workloads.
+                </p>
+                <p>S
+                    Responses are granular and support automated remediation to keep
+                    systems clean and operational.
+                </p>
+                <a href="#" class="feature-link">
+                    Learn more about XDR
+                    <span class="feature-link-arrow">→</span>
+                </a>
+                </div>
+            </div>
+        </section>
+        <section class="feature-highlight2">
+            <div class="feature-card2">
+
+                <div class="feature-content2">
+                <h2>Investigate incidents in one place.</h2>
+                <p>
+                    Seerlogg aggregates logs and telemetry from endpoints, cloud workloads 
+                    and identity providers into a single, searchable timeline.
+                </p>
+                <p>
+                    Analysts can pivot across alerts, assets and users,
+                    enriching data with threat intelligence to understand root cause in minutes.
+                </p>
+                <a href="#" class="feature-link2">
+                    Explore the analytics workspace
+                    <span class="feature-link-arrow2">→</span>
+                </a>
+                </div>
+                <div class="feature-media2">
+                <img src="/src/main/resources/static/frontend/images/original-fe726d2828eea9766e5d03f49b78b9a6.jpg" alt="Incident dashboard">
+                </div>
+            </div>
+        </section>
+        <section id="partners">
+            <div class="running-line">
+                <div class="running-line-content">
+                    <div class="scroll-track">
+                        <div class="block block-1">All documents are safety located</div>
+                        <div class="star-wrapper"><img src="assets/img/star.svg" alt="star"></div>
+                        <div class="block block-2">Files are available in PDF – optimized for viewing on any device</div>
+                        <div class="star-wrapper"><img src="assets/img/star.svg" alt="star"></div>
+                        <div class="block block-3">Easy navigation in your documents</div>
+                        <div class="star-wrapper"><img src="assets/img/star.svg" alt="star"></div>
+                    </div>
+
+                    <div class="scroll-track">
+                        <div class="block block-1">All documents are safety located</div>
+                        <div class="star-wrapper"><img src="assets/img/star.svg" alt="star"></div>
+                        <div class="block block-2">Files are available in PDF – optimized for viewing on any device</div>
+                        <div class="star-wrapper"><img src="assets/img/star.svg" alt="star"></div>
+                        <div class="block block-3">Easy navigation in your documents</div>
+                        <div class="star-wrapper"><img src="assets/img/star.svg" alt="star"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="statistic">
+            <div class="outer-statistic">
+                <div class="stat-container">
+                    <div class="stat-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3.78307 2.82598L12 1L20.2169 2.82598C20.6745 2.92766 21 3.33347 21 3.80217V13.7889C21
+                         15.795 19.9974 17.6684 18.3282 18.7812L12 23L5.6718 18.7812C4.00261 
+                        17.6684 3 15.795 3 13.7889V3.80217C3 3.33347 3.32553 2.92766 3.78307 2.82598Z"></path>
+                        </svg>
+                        <div class="stat-text">
+                            <div class="stat-number">50+ Thousand</div>
+                        <p class="stat-subtext">Protected endpoints</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 19H23V21H1V19H3V4C3 3.44772 3.44772 3 4 3H14C14.5523 3 15 3.44772 15 
+                        4V19H19V11H17V9H20C20.5523 9 21 9.44772 21 10V19ZM5 5V19H13V5H5ZM7 11H11V13H7V11ZM7 
+                        7H11V9H7V7Z"></path>
+                        </svg>
+                        <div class="stat-text">
+                        <div class="stat-number">10+ Thousand</div>
+                        <p class="stat-subtext">Enterprise solutions</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17 7C13.5705 7 10.6449 9.15804 9.50734 12.1903L11.3805 12.8927C12.2337
+                        10.6185 14.4278 9 17 9C17.6983 9 18.3687 9.11928 18.992 9.33857C21.3265 10.16 23 
+                        12.3846 23 15C23 18.3137 20.3137 21 17 21H7C3.68629 21 1 18.3137 1 15C1 12.3846 
+                        2.67346 10.16 5.00804 9.33857C5.0027 9.22639 5 9.11351 5 9C5 5.13401 8.13401 2 12
+                        2C15.242 2 17.9693 4.20399 18.7652 7.19539C18.1973 7.0675 17.6065 7 17 7Z"></path>
+                        </svg>
+                        <div class="stat-text">
+                        <div class="stat-number">100+ Thousand</div>
+                        <p class="stat-subtext">Downloads in the last year</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="about">
+            <div class="about-inner">
+                <div class="about-text">
+                <h2>About Seerlogg</h2>
+                <p>
+                    Seerlogg is an open source security analytics platform that unifies XDR
+                    and SIEM capabilities for modern security teams.
+                </p>
+                <p>
+                    We built it to cut through noisy alerts and give analysts a clear view
+                    of threats across endpoints and cloud workloads.
+                </p>
+                <p>
+                    With an API-first, self-hostable architecture, Seerlogg lets you extend
+                    detections, dashboards and workflows without vendor lock-in.
+                </p>
+            </div>
+
+            <div class="about-facts">
+                <div class="about-fact">
+                    <span class="about-fact-label">Open source</span>
+                    <span class="about-fact-value">MIT / Apache-2.0</span>
+                </div>
+                 <div class="about-fact">
+                    <span class="about-fact-label">Built for</span>
+                    <span class="about-fact-value">SOC & DevOps teams</span>
+                </div>
+                    <div class="about-fact">
+                        <span class="about-fact-label">Stack</span>
+                        <span class="about-fact-value">Java · Postgres · Docker</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer id="footer">
+        <div class="container">
+                <div class="footer-section">
+                    <div class="footer-title">Product</div>
+                    <ul>
+                        <li>Overview</li>
+                        <li>XDR</li>
+                        <li>SIEM</li>
+                        <li>Roadmap</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-title">Resources</div>
+                        <ul>
+                            <li>Documentation</li>
+                            <li>API reference</li>
+                            <li>Demo dashboards</li>
+                        </ul>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-title">Project</div>
+                        <ul>
+                            <li>GitHub repo</li>
+                            <li>Issues & feedback</li>
+                            <li>Changelog</li>
+                        </ul>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-title">Connect</div>
+                        <ul>
+                            <li>About the author</li>
+                            <li>LinkedIn</li>
+                            <li>Email</li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container"></div>
+    </footer>
+    <script src="/src/main/resources/static/frontend/scripts/startscript.js"></script>
+</body>
+</html>
