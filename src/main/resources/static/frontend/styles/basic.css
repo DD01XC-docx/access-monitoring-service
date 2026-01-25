@@ -65,3 +65,28 @@
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
+.dashboard-main {
+  padding: 24px 40px;
+  background: #f3f4f6;
+}
+.dashboard-header h1 {
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.dashboard-header p {
+  color: #6b7280;
+  font-size: 15px;
+}
+.kpi-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px 20px;
+  box-shadow: 0 10px 30px rgba(15, 25, 40, 0.08);
+}
