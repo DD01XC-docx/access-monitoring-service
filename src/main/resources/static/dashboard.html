@@ -4,13 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="frontend/styles/basic.css">
 </head>
 <body>
+    <svg style="display:none">
+        <symbol id="arrow-down-icon-menu" viewBox="0 0 512 512">
+            <g fill="currentColor" stroke="none">
+                <path d="M112 184l144 144 144-144" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="48" 
+                stroke-linecap="round" 
+                stroke-linejoin="round">
+            </g>
+        </symbol>
+    </svg>
     <header id="header" class="header-nav-panel">
-        
+        <a class="nav-left">
+            <div style="max-width:60px; max-height:60px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11 2.04935V13H21.9506C21.4489 18.0533 
+                        17.1853 22 12 22C6.47715 22 2 17.5228 2 12C2 
+                        6.81462 5.94668 2.55107 11 2.04935ZM13 0.542847C18.5535 
+                        1.02121 22.9788 5.4465 23.4571 11H13V0.542847Z">
+                    </path>
+                </svg>
+            </div>
+        </a>
+        <nav id="navigation-top">
+            <button class="nav-tab active">Dashboard</button>
+            <button class="nav-tab">Performance</button>
+            <button class="nav-tab">Incidents</button>
+            <button class="nav-tab">Trends</button>
+            <button class="nav-tab">MTTR Insights</button>
+        </nav>
     </header>
     <main>
-
+        
     </main>
     <footer>
 
