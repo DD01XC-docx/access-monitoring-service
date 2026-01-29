@@ -36,6 +36,10 @@
     color: white;
     cursor: pointer;
 }
+.nav-left:hover {
+  color: var(--accent);
+  transition: 0.4s;
+}
 .nav-tab {
   border: none;
   padding: 8px 18px;
@@ -70,12 +74,12 @@
   background: #f3f4f6;
 }
 .dashboard-header h1 {
-  font-size: 25px;
+  font-size: 35px;
   font-weight: 600;
   margin-bottom: 5px;
 }
 .dashboard-header p {
-  color: #6b7280;
+  color: #000000;
   font-size: 15px;
 }
 .kpi-grid {
@@ -89,4 +93,8 @@
   border-radius: 20px;
   padding: 20px 20px;
   box-shadow: 0 10px 30px rgba(15, 25, 40, 0.08);
+}
+#total-inc, #average-mttr, #open-inc, #sla-compliance {
+  height: 250px;
+  width: auto;
 }
