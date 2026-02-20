@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+        <link rel="stylesheet" href="frontend/styles/basic.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="frontend/scripts/dashboard.js"></script>
+</head>
+<body>
+    <svg style="display:none">
+        <symbol id="arrow-down-icon-menu" viewBox="0 0 512 512">
+            <g fill="currentColor" stroke="none">
+            <path d="M112 184l144 144 144-144" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="48" 
+                stroke-linecap="round" 
+                stroke-linejoin="round">
+            </g>
+        </symbol>
+    </svg>
+    <header id="header" class="header-nav-panel">
+        <a class="nav-left">
+            <div style="width: 70px; height:70px;" class="nav-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11 2.04935V13H21.9506C21.4489 18.0533 
+                        17.1853 22 12 22C6.47715 22 2 17.5228 2 12C2 
+                        6.81462 5.94668 2.55107 11 2.04935ZM13 0.542847C18.5535 
+                        1.02121 22.9788 5.4465 23.4571 11H13V0.542847Z">
+                    </path>
+                </svg>
+            </div>
+        </a>
+        <nav id="navigation-top">
+            <button class="nav-tab active">Dashboard</button>
+             <button class="nav-tab">Performance</button>
+            <button class="nav-tab">Incidents</button>
+            <button class="nav-tab">Trends</button> 
+            <button class="nav-tab">MTTR Insights</button> 
+        </nav>
+    </header>
+    <main class="dashboard-main">
+        <section class="dashboard-header">
+            <div> 
+                <h1>Dashboard Overview</h>
+                <p>Track key metrics and identify areas for improvement to optimize incident response and service quality.</p>
+            </div>
+        </section> 
+        <section class="kpi-grid">
+            <article class="card" id="total-inc-card-art">
+                <label class="l-chart" for="access-range">Access activity</label>
+                <div class="chart-controls">
+                    <select id="access-range">
+                        <option value="1h">Last hour</option>
+                        <option value="24h" selected>Last 24 hours</option>
+                        <option value="7d">Last 7 days</option>
+                    </select> 
+                </div>
+                <div class="card-grad" id="total-inc-card"></div>
+            </article>
+
+            <article class="card" id="sla-compliance-art">
+                <label class="l-chart">SLA Status</label>
+                <div class="card-grad" id="sla-compliance"></div>
+                <a target="_blank" href="https://trainingcamp.com/glossary/sla-compliance/">What is SLA?</a>
+            </article>
+            <article class="card" id="alert-levels-art">
+                <label class="l-chart">Alert Levels</label>
+                <div class="card-grad" id="alert-levels"></div> 
+                <div class="chart-controls">
+                    <input type="date" id="heatmap-date">
+                    <div class="heatmap-nav-date-btns">
+                        <button type="button" id="heatmap-prev-day">◀</button>
+                        <button type="button" id="heatmap-next-day">▶</button>
+                    </div> 
+                </div>
+            </article>
+            <article class="card" id="agent-status-art">
+                <label class="l-chart">Agent-status</label>
+                <div class="card-grad" id="agent-status"></div>
+                <a target="_blank" href="https://calltools.com/glossary/agent-statuses/">What is Agent Status?</a>
+            </article>
+            <article class="card" id="fim-art"> 
+                <label class="l-chart">Top Failed Accounts (24h)</label>
+                <div class="card-grad" id="top-failed-accounts"></div>
+                <a target="_blank" href="https://owasp.org/www-community/attacks/Brute_force_attack">Why this matters?</a>
+            </article>
+            <article class="card" id="fim-art"> 
+                <label class="l-chart">File Integrity</label>
+                <div class="card-grad" id="fim"></div>
+            </article> 
+            <article class="card" id="fim-art">
+            <label class="l-chart">File Integrity</label>
+            <div class="card-grad" id="fim"></div>
+            </article>
+        </section> 
+    </main>
+    <footer>
+
+    </footer>
+</body>
+</html>

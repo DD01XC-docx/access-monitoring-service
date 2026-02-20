@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <link rel="stylesheet" href="/frontend/styles/login.css">
+</head>
+<body>
+    <header>
+        <div class="nav-top">
+                <div id="block-top-left" class="container">
+                    <a class="nav-brand" href="/index.html">
+                        <span class="visually-hidden">Go home</span>
+                        <div style="max-width:80px; max-height:80px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M11 2.04935V13H21.9506C21.4489 18.0533 
+                                                17.1853 22 12 22C6.47715 22 2 17.5228 2 12C2 
+                                                6.81462 5.94668 2.55107 11 2.04935ZM13 0.542847C18.5535 
+                                                1.02121 22.9788 5.4465 23.4571 11H13V0.542847Z">
+                                        </path>
+                                    </svg>
+                                </div>
+                    </a>
+                    <nav>
+                        <ul id="menu-left-above" class="nav">
+                            <li id="menu-item-1" class="item-menu menu-item-type-post">
+                                <a href="/documentation.html">Documentation</a>
+                            </li>
+                            <li id="menu-item-2" class="item-menu menu-item-type-post">
+                                <a href="/cti.html">CTI</a>
+                            </li>
+                            <li id="menu-item-3" class="item-menu menu-item-type-post">
+                                <a href="/cloud.html">Cloud</a>
+                            </li>
+                            <li id="menu-item-4" class="item-menu menu-item-type-post">
+                                <a href="/contact.html">Contact us</a>
+                            </li>
+                        </ul>
+                        <ul id="menu-sentrum-community-links" class="nav">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+    </header>
+
+    <div class="video-bg-container">
+        <video autoplay muted loop playsinline class="bg-media">
+            <source src="/frontend/images/signupmovie.mp4" type="video/mp4">
+        </video>
+        
+        <div class="bg-overlay"></div>
+        
+        <div class="bg-glow"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="message" id="loginMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email" class="label-wrapper">Email Address</label>
+                <div class="input-w-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" class="email" id="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+            <div class="form-group">
+                    <label for="password" class="label-wrapper">Password</label>
+                    <div class="input-w-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+            </div>
+            <div class="options">
+                <div class="remember-me">
+                    <label for="remember">Remember me</label>
+                    <input type="checkbox" id="remember" name="remember">
+                </div>
+                <a href="#" class="forgot-password" id="showForgotPassword">Forgot password?</a>
+            </div>
+            <button type="submit" id="login-btn">Sign In</button>
+        </form>
+
+        <div class="forgot-password-form" id="forgotPasswordForm">
+            <a href="#" id="backToLogin" style="cursor:pointer; color:var(--accent); display:block; margin-bottom:15px;">← Back to Login</a>
+            <div class="message" id="resetMessage"></div>
+                
+            <form id="resetForm">
+                <div class="form-group">
+                    <label for="resetEmail" class="label-wrapper">Email Address</label>
+                    <div class="input-w-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="resetEmail" name="resetEmail" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn" style="width: 100%; margin-top: 10px;">Send Reset Link</button>
+            </form>
+        </div>
+
+        <div class="signuplink">
+            Don't have an account? <a href="./signup.html">Sign up now</a>
+        </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/login.js"></script>
+</body>
+</html>
