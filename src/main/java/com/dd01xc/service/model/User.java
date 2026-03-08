@@ -21,7 +21,7 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    private String password;
+    private String password; 
 
     @Column(nullable = false)
     private String email;
@@ -30,7 +30,7 @@ public class User {
     private String role;
 
     @Column(nullable = false)
-    private boolean enabled;
+    private boolean enabled; 
 
     @Column(nullable = false)
     private String status;

@@ -45,6 +45,34 @@ public class AccessController {
         int percentage = (total > 0) ? (int) ((double) success / total * 100) : 0;
         return Map.of("series", List.of(percentage));
     }
+
+    @GetMapping("/stat/alert-lvls")
+    public ChartDataDTO getAlertLevels(@RequestParam(defaultValue = RANGE_24H) String range) {
+        List <Object[]> dbRows = loadRowsByRange(range);
+        List<String> categories = new ArrayList<>();
+        List <Integer> lowDanger = new ArrayList<>();
+        List <Integer> mediumDanger = new ArrayList<>();
+        List <Integer> highDanger = new ArrayList<>();
+        List <Integer> criticalDanger = new ArrayList<>();
+
+        for (Object[] row : dbRows) {
+            categories.add(extractCategory(row));
+
+            int failedCount = extractNumber(row, 2);
+            lowDanger.add(isBetween(failedCount, 1, 2) ? failedCount : 0);
+            mediumDanger.add(isBetween(failedCount, 3, 4) ? failedCount : 0);
+            highDanger.add(isBetween(failedCount, 5, 6) ? failedCount : 0);
+            criticalDanger.add(failedCount >= 7 ? failedCount : 0);
+        }
+        return new ChartDataDTO(categories, List.of(
+            new ChartDataDTO.Series("Low", lowDanger),
+            new ChartDataDTO.Series("Medium", mediumDanger),
+            new ChartDataDTO.Series("High", highDanger),
+            new ChartDataDTO.Series("Critical", criticalDanger)
+        ));
+    }
+    
+
     @GetMapping("/stat/top-failed")
     public ChartDataDTO getTopFailedAccounts() {
         // top failed accounts for card
@@ -71,7 +99,6 @@ public class AccessController {
             List.of(new ChartDataDTO.Series("Failed attempts", failedCounts))
         );
     }
-
     @GetMapping("/stat/agent-status")
     public Map<String, Object> getAgent() {
         List<Object[]> rows = userRepository.usersByStat();
@@ -150,10 +177,15 @@ public class AccessController {
     }
         return number.intValue();
     }
+
     private String extractAccount(Object[] row) {
         if (row.length == 0 || row[0] == null) {
         return "unknown";
         }
         return row[0].toString();
+    }
+
+     private boolean isBetween(int value, int minInclusive, int maxInclusive) {
+        return value >= minInclusive && value <= maxInclusive;
     }
 }

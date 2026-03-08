@@ -5,8 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
         <link rel="stylesheet" href="frontend/styles/basic.css">
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="frontend/scripts/dashboard.js"></script>
 </head>
 <body>
     <svg style="display:none">
@@ -69,36 +67,23 @@
             <article class="card" id="alert-levels-art">
                 <label class="l-chart">Alert Levels</label>
                 <div class="card-grad" id="alert-levels"></div> 
-                <div class="chart-controls">
-                    <input type="date" id="heatmap-date">
-                    <div class="heatmap-nav-date-btns">
-                        <button type="button" id="heatmap-prev-day">◀</button>
-                        <button type="button" id="heatmap-next-day">▶</button>
-                    </div> 
-                </div>
             </article>
             <article class="card" id="agent-status-art">
                 <label class="l-chart">Agent-status</label>
                 <div class="card-grad" id="agent-status"></div>
                 <a target="_blank" href="https://calltools.com/glossary/agent-statuses/">What is Agent Status?</a>
             </article>
-            <article class="card" id="fim-art"> 
+            <article class="card" id="top-failed-art"> 
                 <label class="l-chart">Top Failed Accounts (24h)</label>
                 <div class="card-grad" id="top-failed-accounts"></div>
                 <a target="_blank" href="https://owasp.org/www-community/attacks/Brute_force_attack">Why this matters?</a>
-            </article>
-            <article class="card" id="fim-art"> 
-                <label class="l-chart">File Integrity</label>
-                <div class="card-grad" id="fim"></div>
-            </article> 
-            <article class="card" id="fim-art">
-            <label class="l-chart">File Integrity</label>
-            <div class="card-grad" id="fim"></div>
             </article>
         </section> 
     </main>
     <footer>
 
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="frontend/scripts/dashboard.js"></script>
 </body>
 </html>

@@ -1,211 +1,203 @@
-document.addEventListener('DOMContentLoaded', async function() {
-    await initDashboard();
-});
-async function initDashboard() {
-    const accessRangeSelect = document.getElementById('access-range');
-    let currentRange = accessRangeSelect ? accessRangeSelect.value : '24h';
-    //graph-configs
-    const chartConfigs = [
-    { id: "#total-inc-card", url: "/api/access/stat/hourly", type: "area", key: "accessChart" },
-    { id: "#sla-compliance", url: "/api/access/stat/sla", type: "radialBar", key: "slaChart" },
-    { id: "#top-failed-accounts", url: "/api/access/stat/top-failed", type: "bar", key: "topFailedChart" },
-    { id: "#agent-status", url: "/api/access/stat/agent-status", type: "treemap", key: "agentChart" }
-    ];
-    //refresh
-    const refreshData = async () => {
-        for(const config of chartConfigs) {
-            try {
-                const requestUrl = config.key === 'accessChart'
-                    ? `${config.url}?range=${encodeURIComponent(currentRange)}`
-                    : config.url;
-                const res = await fetch(requestUrl);
-                if (!res.ok) {
-                    console.error('Request failed:', config.url, res.status);
-                    continue;
-                }
-                const data = await res.json();
-                const chartData = data && (data.series || data);
+const CHART_DEFAULT_THEME = {
+    mode: 'dark',
+    colors: {
+        success: '#22c55e',
+        warning: '#f59e0b',
+        danger: '#ef4444',
+        info: '#3b82f6',
+        grid: 'rgba(150, 150, 180, 0.1)'
+    }
+};
 
-                if (!chartData) {
-                    console.error('Empty chart data:', config.url);
-                    continue;
-                }
+const RANGE_CONFIG = {
+    '1h': 'Last hour',
+    '24h' : 'Last 24 hours',
+    '7d' : 'Last 7 days'
+};
 
-            if (!window[config.key]) {
-                const extra = config.type === 'radialBar' ?
-                {labels: ['SLA Success'], colors: ['green']} :
-                config.type === 'bar' ?
-                { colors: ['#ef4444'], horizontal: true } :
-                {};
-                    window[config.key] = renderChart(config.id, config.type, chartData, data.categories, extra);
-            } else {
-                window[config.key].updateSeries(chartData);
-                    if (data.categories) {
-                            let xaxisOptions = { categories: data.categories };
+const BASED_CHART_OPTIONS = {
+    chart: {
+        height: 280,
+        background: 'transparent',
+        toolbar: {show:false},
+        animations: {enabled: true,speed:500},
+    },
+    theme: { mode: CHART_DEFAULT_THEME.mode },
+    grid: {
+        borderColor: CHART_DEFAULT_THEME.colors.grid,
+        strokeDashArray: 4 
+    },
+    dataLabels: { enabled: false }
+};
 
-                            if (config.key === 'accessChart') {
-                                const isDense24hAxis = Array.isArray(data.categories) && data.categories.length >= 20;
-                                xaxisOptions = {
-                                    categories: data.categories,
-                                    tickAmount: isDense24hAxis ? 12 : undefined,
-                                    labels: {
-                                        show: true,
-                                        rotate: isDense24hAxis ? -45 : 0,
-                                        hideOverlappingLabels: true,
-                                        trim: false
-                                    },
-                                    tickPlacement: 'on',
-                                    tooltip: { enabled: false }
-                                };
-                            }
+const CHART_CONFIG = [
+    {
+        id: '#total-inc-card',
+        key: 'accessChart',
+        type: 'area',
+        url: '/api/access/stat/hourly',
+        hasRange: true
+    },
+    {
+        id: '#sla-compliance',
+        url: '/api/access/stat/sla',
+        type: 'radialBar',
+        key: "slaChart"
+    },
+    {
+        id: '#alert-levels',
+        url: '/api/access/stat/alert-lvls',
+        type: 'line',
+        key: 'alertLevelsChart',
+        hasRange: true
+    },
+    {
+        id: '#top-failed-accounts',
+        url: '/api/access/stat/top-failed',
+        type: 'bar',
+        key: 'topFailedChart'
+    },
+    {
+        id: '#agent-status',
+        url:'/api/access/stat/agent-status',
+        type: 'treemap',
+        key: 'agentChart'
+    }
+];
 
-                            window[config.key].updateOptions({
-                                xaxis: xaxisOptions
-                            });
+const TYPE_PRESETS = {
+    area: {
+        colors: [CHART_DEFAULT_THEME.colors.success, CHART_DEFAULT_THEME.colors.warning],
+        stroke: {curve: 'smooth', width: 3},
+        fill: {type: 'gradient', gradient: {opacityFrom: 0.5, opacityTo: 0.1}}
+    },
+    radialBar: {
+        colors: [CHART_DEFAULT_THEME.colors.info],
+        plotOptions: {
+            radialBar: {
+                hollow: {size: '85%'},
+                dataLabels: {
+                    name: {show: true, color: '#0156ce', fontSize: '25px'},
+                    value: {show: true, color : '#0156ce', fontSize: '25px'}
                 }
-                }
-            } catch (e) {
-                    console.error('Update error:', e);
             }
         }
-    };
-    if (accessRangeSelect) {
-        accessRangeSelect.addEventListener('change', async function (e) {
-            currentRange = e.target.value;
-            await refreshData();
-        });
-    }
-    initAlertLevelsCard();
-    await refreshData();
-}
-
-function initAlertLevelsCard() {
-    // alert levels
-    const dateInput = document.getElementById('heatmap-date');
-    const prevBtn = document.getElementById('heatmap-prev-day');
-    const nextBtn = document.getElementById('heatmap-next-day');
-
-    if (!dateInput) {
-        return;
-    }
-
-    let selectedDate = new Date(); // today
-    dateInput.value = formatDateForInput(selectedDate);
-
-    const renderHeatmapForDate = () => {
-        const heatmapSeries = generateHeatmapData(selectedDate);
-
-        if (!window.alertLevelsChart) {
-            window.alertLevelsChart = renderChart('#alert-levels', 'heatmap', heatmapSeries);
-            return;
-        }
-
-        window.alertLevelsChart.updateSeries(heatmapSeries);
-    };
-
-    dateInput.addEventListener('change', function (e) {
-        const parsedDate = new Date(e.target.value);
-
-        if (!isNaN(parsedDate.getTime())) {
-            selectedDate = parsedDate;
-            renderHeatmapForDate();
-        }
-    });
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function () {
-            selectedDate.setDate(selectedDate.getDate() - 1);
-            dateInput.value = formatDateForInput(selectedDate);
-            renderHeatmapForDate();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function () {
-            selectedDate.setDate(selectedDate.getDate() + 1);
-            dateInput.value = formatDateForInput(selectedDate);
-            renderHeatmapForDate();
-        });
-    }
-
-    renderHeatmapForDate();
-}
-
-function formatDateForInput(dateObj) {
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-function renderChart(containerId, type, series, categories = null, customOptions = {}) {
-    const isArea = type === 'area';
-    const baseOptions = {
-        chart: {
-            type: type,
-            height: type === 'radialBar' ? 250 : 350,
-            background: 'transparent',
-            animations: {
-                enabled: true,
-                easing: 'linear',
-                speed: 250,
-                dynamicAnimation: {
-                    enabled: true,
-                    speed: 250
-                }
+    },
+    bar: {
+        colors: [CHART_DEFAULT_THEME.colors.danger],
+        plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '60%' } },
+        dataLabels: {enabled: true}
+    },
+    treemap: {
+        colors: ['green', 'orange', 'red', 'blue'],
+        plotOptions: {
+            treemap: {
+                distributed: true,
+                enableShades: false,
+                borderRadius: 5
+            }
+        },
+        stroke: {
+            show: true,
+            width: 1,
+            colors: ['rgba(15,20,40,0.5)']
+        },
+        dataLabels: {
+            enabled: true,
+            style: {
+                fontSize : '10px',
+                fontWeight: 500
             },
-            toolbar: {
-                show: false
+            formatter: function(text, opts) {
+                return text + ": " + opts.value;
             }
-        },
-        theme: { mode: 'dark' },
-        series: series,
-        colors: customOptions.colors || ['#22c55e', '#f59e0b'],
-        stroke: type === 'donut' ? { colors: ['transparent'] } : { curve: 'smooth', width: 3 },
-        labels: customOptions.labels || [],
-        annotations: {},
-        dataLabels: { enabled: false },
-        yaxis: {
-            labels: {
-                formatter: function (val) {
-                    return typeof val === 'number' ? val.toFixed(0) : val;
-                }
-            }
-        },
-        grid: {
-            borderColor: 'rgba(148, 163, 184, 0.2)',
-            strokeDashArray: 4
-        },
-        legend: {
-            position: 'top',
-            labels: { colors: '#cbd5e1' }
         },
         tooltip: {
-            theme: 'dark'
-        }
-    };
-
-    //area
-    if (isArea) {
-        baseOptions.markers = {
-            size: 2,
-            hover: { size: 5 }
-        };
-        baseOptions.fill = {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.35,
-                opacityTo: 0.05,
-                stops: [0, 90, 100]
+            theme: 'dark',
+            y: {
+                formatter: function(val) {
+                    return val + ' agents';
+                }
             }
-        };
+        }
+    },
+    line: {
+        colors: ['#38bdf8', '#fff200', '#dc465c', '#fa0707'],
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
+        markers: {
+            size: 4,
+            hover: {
+                size: 6
+            }
+        },
+        legend: {
+            show: true,
+            position: 'top',
+            horizontalAlign: 'left'
+        },
+        fill: {
+            opacity: 0.8
+        },
+        xaxis: {
+            type: 'category',
+            labels: {
+                style: {
+                    colors: '#fff'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: '#fff'
+                }
+            }
+        },
+        tooltip: {
+            theme: 'dark',
+            y: {
+                formatter: function(val) {
+                    return val + ' failed attempts';
+                }
+            }
+        }
     }
-    //categories
-    if (categories) {
-        const isDense24hAxis = type === 'area' && categories.length >= 20;
-        baseOptions.xaxis = {
-            categories: categories,
+};
+
+function renderChartOptions(data, config) {
+
+    let options = structuredClone(BASED_CHART_OPTIONS);
+
+    const defaultPreset = TYPE_PRESETS[config.type] || {};
+
+    options = { ...options, ...defaultPreset };
+    options.chart.type = config.type;
+    options.series = data.series || data;
+
+     if (defaultPreset.plotOptions) {
+        options.plotOptions = defaultPreset.plotOptions;
+    }
+
+    if (defaultPreset.tooltip) {
+        options.tooltip = defaultPreset.tooltip;
+    }
+
+    if (defaultPreset.stroke) {
+        options.stroke = defaultPreset.stroke;
+    }
+
+    if (defaultPreset.fill) {
+        options.fill = defaultPreset.fill;
+    }
+
+    if (data.categories) {
+         const isDense24hAxis = config.type === 'area' && data.categories.length >= 20;
+        options.xaxis = {
+            ...options.xaxis,
+            categories: data.categories,
             tickAmount: isDense24hAxis ? 12 : undefined,
             labels: {
                 show: true,
@@ -217,122 +209,75 @@ function renderChart(containerId, type, series, categories = null, customOptions
             tooltip: { enabled: false }
         };
     }
-    //radial
-    if (type === 'radialBar') {
-        baseOptions.plotOptions = {
-            radialBar: {
-                hollow: {size: '85%'},
-                dataLabels: {
-                name: {show: true, color: '#0156ce', fontSize: '25px'},
-                value: {show: true, color: '#0156ce', fontSize: '25px'}
-                }
-            }
-        };
-        baseOptions.labels = customOptions.labels || [];
-    }
-    //bar
-    if (type === 'bar') {
-        baseOptions.plotOptions = {
-            bar: {
-                horizontal: customOptions.horizontal === true,
-                borderRadius: 4,
-                barHeight: '60%'
-            }
-        };
-        baseOptions.dataLabels = { enabled: true };
-    }
-    //heatmap
-    if (type === 'heatmap') {
-    baseOptions.plotOptions = {
-        heatmap: {
-            shadeIntensity: 0,
-            radius: 4,
-            useFillColorAsStroke: false,
-            colorScale: {
-                ranges: [
-                    { from: 0, to: 10, name: 'Low', color: '#2D93AD' },
-                    { from: 11, to: 40, name: 'Medium', color: '#F7B84B' },
-                    { from: 41, to: 70, name: 'High', color: '#F06548' },
-                    { from: 71, to: 100, name: 'Critical', color: '#B11E31' }
-                ]
-            }
-        }
-    };
-    baseOptions.dataLabels = {enabled: false};
-    }
-    //treemap
-    if (type === 'treemap') {
-    baseOptions.chart.height = 300;
-    const legendObj = {
-        show: false
-    };
-    baseOptions.legend = legendObj;
-    if (customOptions.colors != null) {
-        baseOptions.colors = customOptions.colors;
-    } else {
-        baseOptions.colors = ['green', 'orange', 'red', 'blue'];
-    }
-    baseOptions.stroke = {};
-    baseOptions.stroke.show = true;
-    baseOptions.stroke.width = 1;
-    baseOptions.stroke.colors = ['rgba(15,20,40,0.50)'];
-    baseOptions.dataLabels = {
-        enabled: true,
-        style: {
-            fontSize: '10px',
-            fontWeight: 600
-        },
-        formatter: function(text, opts) {
-            return text + ": " + opts.value;
-        }
-    };
-    baseOptions.plotOptions = {
-        treemap: {
-            distributed: true,
-            enableShades: false,
-            borderRadius: 6
-        }
-    };
-    baseOptions.tooltip = {
-        theme: 'dark',
-        y: {
-            formatter: function(val) {
-                return val + " agents";
-            }
-        }
-    };
-}
-    const chartElement = document.querySelector(containerId);
-    if (chartElement) {
-        const chart = new ApexCharts(chartElement, baseOptions);
-        chart.render();
-        return chart;
-    }
-}
-function updateCards(data) {
-    const totalEl = document.getElementById('total-inc');
-    const openEl = document.getElementById('open-inc');
-    
-    if (totalEl) totalEl.innerHTML = `<h3>${data.total}</h3><p>Total Access</p>`;
-    if (openEl) openEl.innerHTML = `<h3>${data.open}</h3><p>Open Incidents</p>`;
-}
-//heatmap-func
-function generateHeatmapData(dateObj = new Date()) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const dateSeed =
-        dateObj.getFullYear() * 10000 +
-        (dateObj.getMonth() + 1) * 100 +
-        dateObj.getDate();
-    const getValue = (dayIndex, hourIndex) => {
-        const seed = dateSeed + dayIndex * 37 + hourIndex * 17;
-        return (seed * 13) % 51;
-    };
 
-    return days.map(day => ({
-        name: day,
-        data: Array.from({ length: 5 }, (_, i) => ({
-            x: `${i}:00`,
-            y: getValue(days.indexOf(day), i)
-        }))
-    }));
+    if (config.options) {
+
+        Object.keys(config.options).forEach(key => {
+            if (typeof config.options[key] === 'object' && options[key]) {
+                options[key] = { ...options[key], ...config.options[key] };
+            } else {
+                options[key] = config.options[key];
+            }
+        });
+    }
+    return options;
 }
+
+let currentRange = '24h';
+const chartInstances = new Map();   
+
+
+async function initDashboard() {
+    document.getElementById('access-range')?.addEventListener('change', (e) => {
+        currentRange = e.target.value;
+        refreshDashboard(); 
+    });
+    await Promise.all(CHART_CONFIG.map(config => syncChart(config)));
+}
+
+function buildRequestUrl(config, currentRange) {
+    let url = config.url;
+    if (config.hasRange) {
+         const separator = url.includes('?') ? '&' : '?';
+        url = url + separator + 'range=' + currentRange;
+    }
+    return url;
+}
+
+async function syncChart(config) {
+    try {
+        const data = await fetchData(config, currentRange);
+        const options = renderChartOptions(data, config);
+        const el = document.querySelector(config.id);
+        if (!el) {
+            console.warn(`Element ${config.id} not found for chart ${config.key}`);
+            return;
+        }
+        const existingChart = chartInstances.get(config.key);
+        if (existingChart) {
+            await existingChart.updateOptions(options);
+        } else {
+            const chart = new ApexCharts(el, options);
+            await chart.render();
+            chartInstances.set(config.key, chart);
+        }
+    } catch (error) {console.error('SyncChart error:', error);}
+}
+
+async function fetchData(config, currentRange) {
+    const url = buildRequestUrl(config, currentRange);
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error('Request failed: ' + response.status);
+    }
+    return await response.json();
+}
+
+async function refreshDashboard() {
+    await Promise.all(CHART_CONFIG.map(config => syncChart(config)));
+}
+
+setInterval(refreshDashboard, 20000);
+
+
+document.addEventListener('DOMContentLoaded', initDashboard);
