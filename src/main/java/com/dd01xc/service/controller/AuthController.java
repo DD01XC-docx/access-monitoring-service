@@ -4,6 +4,7 @@ import com.dd01xc.service.model.AccessEvent;
 import com.dd01xc.service.model.User;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
+import com.dd01xc.service.service.JwtService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import io.micrometer.core.ipc.http.HttpSender;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -44,6 +44,9 @@ public class AuthController {
     private AccessRepository accessRepository;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private HttpServletRequest request;
 
     @PostMapping("/login")
@@ -55,8 +58,12 @@ public class AuthController {
             accessEvent.setStatus(ACCESS_STATUS_SUCCESS);
             accessRepository.save(accessEvent);
             User user = userOptional.get();
+            
+            // Generate JWT token
+            String jwtToken = jwtService.generateToken(user.getUsername(), user.getRole());
+            
             Map<String, String> response = new HashMap<>();
-            response.put("token", "jwt-token-placeholder");
+            response.put("token", jwtToken);
             response.put("username", user.getUsername());
             response.put("role", user.getRole());
             return ResponseEntity.ok(response);
@@ -87,6 +94,11 @@ public class AuthController {
         user.setStatus(USER_STATUS_ACTIVE);
         userRepository.save(user);
         return ResponseEntity.ok(REGISTER_SUCCESS_MESSAGE);
+    }
+    //checkAuth
+    @PostMapping("/check")
+    public ResponseEntity<?> checkAuth() {
+        return ResponseEntity.ok("Authenticated successfully");
     }
     //userfinder
     private Optional<User> findUserByEmailOrUsername(String emailOrUsername) {

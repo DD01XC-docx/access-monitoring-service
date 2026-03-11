@@ -55,24 +55,21 @@
             flex: 1;
             transition: 0.3s;
         }
-        
         .feature-box:hover {
             transform: translateY(-4px);
             border-color: #6366f1;
         }
-        
         .feature-box h3 {
             color: #ffffff;
             font-size: 20px;
             margin-top: 15px;
         }
-        
         .feature-box p {
             color: #94a3b8;
             font-size: 14px;
             margin-top: 10px;
         }
-        
+
         .signup-form-card {
             background: #111827;
             padding: 40px;
@@ -81,19 +78,16 @@
             max-width: 600px;
             margin: 40px auto;
         }
-        
         .form-row {
             margin-bottom: 20px;
             text-align: left;
         }
-        
         .form-row label {
             display: block;
             color: #cbd5e1;
             margin-bottom: 8px;
             font-size: 14px;
         }
-        
         .form-row input {
             width: 100%;
             padding: 12px;
@@ -104,7 +98,6 @@
             font-size: 16px;
             outline: none;
         }
-        
         .form-row input:focus {
             border-color: #6366f1;
         }
@@ -121,7 +114,6 @@
             width: 100%;
             transition: 0.2s;
         }
-        
         .trial-btn-primary:hover {
             background: #4f46e5;
         }
@@ -132,11 +124,9 @@
             color: #94a3b8;
             text-decoration: none;
         }
-
         .back-link:hover {
             color: #ffffff;
         }
-        
         .status-badge {
             background: rgba(16, 185, 129, 0.1);
             color: #10b981;
@@ -387,28 +377,20 @@
     </footer>
     <script>
         const myForm = document.getElementById('trial-form-main');
-
         myForm.onsubmit = function(event) {
             event.preventDefault();
-
             const name = document.getElementById('inputName').value;
             const email = document.getElementById('inputEmail').value;
             const company = document.getElementById('inputCompany').value;
             const pass = document.getElementById('inputPassword').value;
-
-            // Log data to console for testing
             console.log("New registration attempt...");
             console.log("Name: " + name);
             console.log("Email: " + email);
-
             if (pass.length < 8) {
                 alert("Password is too short! Please use at least 8 characters.");
                 return;
             }
-
-            // Fake success message
             alert("Success! Welcome to Seerlogg, " + name + ". We are redirecting you now...");
-            
             setTimeout(function() {
                 window.location.href = '/dashboard.html';
             }, 1500);

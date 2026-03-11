@@ -278,8 +278,25 @@ async function syncChart(config) {
 
 async function fetchData(config, currentRange) {
     const url = buildRequestUrl(config, currentRange);
-    const response = await fetch(url);
+    const token = localStorage.getItem('jwt'); 
+    if (!token) {
+        window.location.href = '/login.html';
+        return;
+    }
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
     if (!response.ok) {
+        // Если сервер ответил 401 или 403, значит токен протух
+        if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem('jwt'); // Очищаем старый токен
+            window.location.href = '/login.html';
+        }
         throw new Error('Request failed: ' + response.status);
     }
     return await response.json();
