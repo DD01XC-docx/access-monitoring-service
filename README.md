@@ -124,7 +124,7 @@ This is a learning/pet project and currently includes simplified security behavi
 
 ## Roadmap
 
-- [ ] Implement real JWT authentication
+- [✓] Implement real JWT authentication
 - [ ] Add request validation and global exception handling
 - [ ] Add unit/integration tests for controllers and repositories
 - [ ] Add role-based authorization for sensitive endpoints
