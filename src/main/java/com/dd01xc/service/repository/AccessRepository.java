@@ -43,7 +43,7 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
         LEFT JOIN access_events ae
         ON date_trunc('hour', ae.created_at) = gs.hour
         AND ae.created_at >= date_trunc('hour', now()) - interval '23 hours'
-        AND ae.created_at <  date_trunc('hour', now()) + interval '1 hour'
+        AND ae.created_at <  date_trunc('hour', now()) + interval '3 hour'
         GROUP BY gs.hour
         ORDER BY gs.hour
         """, nativeQuery = true)
@@ -81,4 +81,10 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
         LIMIT 5
         """, nativeQuery = true)
     List<Object[]> getTopFailedAccountsLast24Hours();
+        //IP-access
+    @Query("SELECT a.ipAddress, COUNT(a) FROM AccessEvent a " +
+       "WHERE a.status = 'FAILED' " +
+       "GROUP BY a.ipAddress " +
+       "ORDER BY COUNT(a) DESC")
+    List<Object[]> getTopFailedIps();
 }

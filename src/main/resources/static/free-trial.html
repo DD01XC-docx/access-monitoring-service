@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trial Signup - Seerlogg</title>
+    <link rel="stylesheet" href="frontend/styles/startstyle.css">
+    <style>
+        .hero-trial-section {
+            background: linear-gradient(135deg, #1e293b 0%, #080c14 100%);
+            padding-top: 100px;
+            padding-bottom: 80px;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .container-small {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .hero-trial-section h1 {
+            font-size: 45px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        
+        .hero-trial-section p {
+            font-size: 18px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .features-list-trial {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 60px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .features-list-trial {
+                flex-direction: column;
+            }
+        }
+        
+        .feature-box {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            text-align: center;
+            flex: 1;
+            transition: 0.3s;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-4px);
+            border-color: #6366f1;
+        }
+        
+        .feature-box h3 {
+            color: #ffffff;
+            font-size: 20px;
+            margin-top: 15px;
+        }
+        
+        .feature-box p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .signup-form-card {
+            background: #111827;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #1f2937;
+            max-width: 600px;
+            margin: 40px auto;
+        }
+        
+        .form-row {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-row label {
+            display: block;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-row input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #374151;
+            background: #030712;
+            color: #ffffff;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .form-row input:focus {
+            border-color: #6366f1;
+        }
+        
+        .trial-btn-primary {
+            background: #6366f1;
+            color: #ffffff;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        
+        .trial-btn-primary:hover {
+            background: #4f46e5;
+        }
+        
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+        }
+        
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header id="header" class="generally-nav-panel">
+        <section>
+            <div class="nav-top">
+                <div id="block-top-left" class="container">
+                    <a class="nav-brand" href="/index.html">
+                        <span class="visually-hidden">Go home</span>
+                        <div style="max-width:80px; max-height:80px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M11 2.04935V13H21.9506C21.4489 18.0533 
+                                                17.1853 22 12 22C6.47715 22 2 17.5228 2 12C2 
+                                                6.81462 5.94668 2.55107 11 2.04935ZM13 0.542847C18.5535 
+                                                1.02121 22.9788 5.4465 23.4571 11H13V0.542847Z">
+                                        </path>
+                                    </svg>
+                                </div>
+                    </a>
+                    <nav>
+                        <ul id="menu-left-above" class="nav">
+                            <li id="menu-item-1" class="item-menu menu-item-type-post">
+                                <a href="/documentation.html">Documentation</a>
+                            </li>
+                            <li id="menu-item-2" class="item-menu menu-item-type-post">
+                                <a href="/cti.html">CTI</a>
+                            </li>
+                             <li id="menu-item-3" class="item-menu menu-item-type-post">
+                                <a href="/cloud.html">Cloud</a>
+                            </li>
+                             <li id="menu-item-4" class="item-menu menu-item-type-post">
+                                <a href="/contact.html">Contact us</a>
+                            </li>
+                        </ul>
+                        <ul id="menu-sentrum-community-links" class="nav">
+                        </ul>
+                    </nav>
+                </div>
+                <div id="desktop-search-input">
+                    <div class="header-search collapsed">
+                        <form method="get" action="">
+                            <div class="search-input-wrapper-container">
+                                <div class="search-input-wrapper">
+                                    <label id="label-search" aria-label="Search here">
+                                        <span class="visually-hidden">Search here</span>
+                                        <input type="text" autocomplete="off" class="form-control" name="se" placeholder="Search">
+                                        <button id="search-b" type="submit"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 
+                                            18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 
+                                            6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 
+                                            16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 
+                                            14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 
+                                            18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path>
+                                        </svg>
+                                        </button>
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>  
+            </div>
+            <div class="nav-main container">
+                <div class="nav-brand"></div>
+                    <div class="nav-bar collapse">
+                        <ul id="main-menu" class="navbar-nav">
+                            <li id="main-menu-item-1" class="dropdown menu-item-main">
+                                <a class="dropdown-toggle" target="_blank" href="">
+                                    <span>Services</span>    
+                                    <svg width="24" height="24" class="nav-arrow">
+                                        <use href="#arrow-down-icon-menu"></use>
+                                    </svg>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a target="_blank" href="">Professional support</a></li>
+                                    <li><a target="_blank" href="">Consulting services</a></li>
+                                    <li><a target="_blank" href="">Training courses</a></li>
+                                </ul>
+                            </li>
+                            <li id="main-menu-item-2" class="dropdown menu-item-main">
+                                <a class="dropdown-toggle" target="_blank" href="">
+                                    <span>Partners</span>
+                                    <svg width="24" height="24" class="nav-arrow">
+                                        <use href="#arrow-down-icon-menu"></use>
+                                    </svg>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a target="_blank" href="">Become a partner</a></li>
+                                    <li><a target="_blank" href="">About ours partners</a></li>
+                                </ul>
+                            </li>
+                            <li id="main-menu-item-3" class="dropdown menu-item-main">
+                            <a class="dropdown-toggle" target="_blank" href="">
+                                <span>Company</span>
+                                <svg width="24" height="24" class="nav-arrow">
+                                    <use href="#arrow-down-icon-menu"></use>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a target="_blank" href="">Customers</a></li>
+                                <li><a target="_blank" href="">About us</a></li>
+                                <li><a target="_blank" href="">Our team</a></li>
+                                <li><a target="_blank" href="">Resources</a></li>
+                            </ul>
+                        </li>
+                        <li id="main-menu-item-4" class="dropdown menu-item-main">
+                            <a class="dropdown-toggle" target="_blank" href="">
+                                <span>Platform</span>
+                                <svg width="24" height="24" class="nav-arrow">
+                                    <use href="#arrow-down-icon-menu"></use>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a target="_blank" href="">Overview</a></li>
+                                <li><a target="_blank" href="">XDR</a></li>
+                                <li><a target="_blank" href="">SIEN</a></li>
+                            </ul>
+                        </li>
+                        <li id="main-menu-item-5" class="menu-item-main"></li>
+                        <li id="main-menu-item-6" class="menu-item-main"></li>
+                    </ul>
+                    <ul id="buttons-menu-container">
+                        <li id="main-menu-item-7b" class="login-menu-item-main">
+                            <a href="/login.html" class="btn-loggin-linear-g">Log in</a>
+                        </li>
+                        <li id="main-menu-item-8b" class="intall-menu-item-main">
+                            <a href="/signup.html" class="btn-install-linear-g">Sign up</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </header>
+    <main>
+        <section class="hero-trial-section">
+            <div class="container-small">
+                <div class="status-badge">Instant Setup Available</div>
+                <h1>Start Your Free Trial</h1>
+                <p>Get full access to the Seerlogg platform for 30 days. No credit card needed, just your work email to get started.</p>
+            </div>
+        </section>
+
+        <section class="container-small">
+            <div class="features-list-trial">
+                <div class="feature-box">
+                    <div style="font-size: 40px;">🛡️</div>
+                    <h3>Full Power</h3>
+                    <p>All XDR and SIEM tools are included in the trial.</p>
+                </div>
+                <div class="feature-box">
+                    <div style="font-size: 40px;">⚡</div>
+                    <h3>Quick Start</h3>
+                    <p>Launch your instance in just a few minutes.</p>
+                </div>
+                <div class="feature-box">
+                    <div style="font-size: 40px;">📊</div>
+                    <h3>Dashboards</h3>
+                    <p>View real-time analytics for your security data.</p>
+                </div>
+            </div>
+
+            <div class="signup-form-card">
+                <h2 style="color: white; margin-bottom: 30px; text-align: center;">Account Details</h2>
+                
+                <form id="trial-form-main">
+                    <div class="form-row">
+                        <label>Full Name</label>
+                        <input type="text" id="inputName" placeholder="e.g. John Doe" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Email Address</label>
+                        <input type="email" id="inputEmail" placeholder="name@company.com" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>Company</label>
+                        <input type="text" id="inputCompany" placeholder="Your Company Name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Password</label>
+                        <input type="password" id="inputPassword" placeholder="Min. 8 characters" required>
+                    </div>
+
+                    <button type="submit" class="trial-btn-primary">Create My Account</button>
+                    
+                    <div style="text-align: center;">
+                        <a href="/index.html" class="back-link">Cancel and go back</a>
+                    </div>
+                </form>
+            </div>
+
+            <div style="text-align: center; color: #64748b; font-size: 12px; margin-bottom: 60px;">
+                By signing up, you agree to our Terms of Service and Privacy Policy.<br>
+                We use encryption to protect your data.
+            </div>
+        </section>
+    </main>
+    <footer id="footer">
+        <div class="container">
+                <div class="footer-section">
+                    <div class="footer-title">Product</div>
+                    <ul>
+                        <li><a href="/index.html">Overview</a></li>
+                        <li><a href="/index.html">XDR</a></li>
+                        <li><a href="/index.html">SIEM</a></li>
+                        <li><a href="/index.html">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-title">Resources</div>
+                        <ul>
+                            <li><a href="/documentation.html">Documentation</a></li>
+                            <li><a href="https://www.swagger.io">API reference</a></li>
+                            <li><a href="https://apexcharts.com/javascript-chart-demos/">Demo dashboards</a></li>
+                        </ul>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-title">Project</div>
+                        <ul>
+                            <li><a href="https://github.com/DD01XC-docx/access-monitoring-service">GitHub repo</a></li>
+                            <li>Issues & feedback</li>
+                            <li>Changelog</li>
+                        </ul>
+                </div>
+                <div class="footer-section">
+                    <div class="footer-title">Connect</div>
+                        <ul>
+                            <li>About the author</li>
+                            <li><a href="https://www.linkedin.com/in/eivind-hansen-681773277/">LinkedIn</a></li>
+                            <li><a href="heivind23@gmail.com">Email</a></li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container"></div>
+    </footer>
+    <script>
+        const myForm = document.getElementById('trial-form-main');
+
+        myForm.onsubmit = function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('inputName').value;
+            const email = document.getElementById('inputEmail').value;
+            const company = document.getElementById('inputCompany').value;
+            const pass = document.getElementById('inputPassword').value;
+
+            // Log data to console for testing
+            console.log("New registration attempt...");
+            console.log("Name: " + name);
+            console.log("Email: " + email);
+
+            if (pass.length < 8) {
+                alert("Password is too short! Please use at least 8 characters.");
+                return;
+            }
+
+            // Fake success message
+            alert("Success! Welcome to Seerlogg, " + name + ". We are redirecting you now...");
+            
+            setTimeout(function() {
+                window.location.href = '/dashboard.html';
+            }, 1500);
+        };
+    </script>
+</body>
+</html>

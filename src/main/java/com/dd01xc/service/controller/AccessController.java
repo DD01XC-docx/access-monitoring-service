@@ -3,16 +3,21 @@ package com.dd01xc.service.controller;
 import com.dd01xc.service.model.ChartDataDTO;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/access")
@@ -119,7 +124,7 @@ public class AccessController {
         point.put("x", status);
         point.put("y", count);
         points.add(point);
-    }
+        }
         if (points.size() == 0) {
             Map<String, Object> noData = new HashMap<>();
             noData.put("x", "NO DATA");
@@ -135,7 +140,31 @@ public class AccessController {
         response.put("series", seriesList);
         return response;
     }
+
+    @GetMapping("/stat/health")
+        public List<Map<String, Object>> checkDB(@RequestParam(required = false) String param) {
+        List<Map<String, Object>> health = new ArrayList<>();
+        Map<String, Object> userDb = new HashMap<>();
+        userDb.put("x", "User DB");
+        userDb.put("y", isRepoUp(userRepository) ? 1 : 0);
+        userDb.put("status", isRepoUp(userRepository) ? "UP" : "DOWN");
+        health.add(userDb);
+        Map<String, Object> accessDb = new HashMap<>();
+        accessDb.put("x", "Access DB");
+        accessDb.put("y", isRepoUp(accessRepository) ? 1 : 0);
+        userDb.put("status", isRepoUp(userRepository) ? "UP" : "DOWN");
+        health.add(accessDb);
+        return health;
+}
     
+    private boolean isRepoUp(JpaRepository<?, ?> repo) {
+        try {
+            repo.count();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     private List<Object[]> loadRowsByRange(String range) {
         return switch (range.toLowerCase()) {

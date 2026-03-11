@@ -22,6 +22,8 @@ public class AccessEvent {
     private String status;
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    @Column(name = "ip_address")
+    private String ipAddress;
 
     public Long getId() {
         return id;
@@ -43,6 +45,10 @@ public class AccessEvent {
     }
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+    public void setIpAddress(String ipAddress) {this.ipAddress = ipAddress;}
+    public String getIpAddress() {
+        return ipAddress;
     }
     @PrePersist
     protected void onCreate() {

@@ -32,11 +32,10 @@
             </div>
         </a>
         <nav id="navigation-top">
-            <button class="nav-tab active">Dashboard</button>
-             <button class="nav-tab">Performance</button>
-            <button class="nav-tab">Incidents</button>
-            <button class="nav-tab">Trends</button> 
-            <button class="nav-tab">MTTR Insights</button> 
+            <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('performance')">Performance</button>
+            <button class="nav-tab" onclick="switchTab('incidents')">Incidents</button>
+            <button class="nav-tab" onclick="switchTab('security')">Security</button>
         </nav>
     </header>
     <main class="dashboard-main">
@@ -77,6 +76,10 @@
                 <label class="l-chart">Top Failed Accounts (24h)</label>
                 <div class="card-grad" id="top-failed-accounts"></div>
                 <a target="_blank" href="https://owasp.org/www-community/attacks/Brute_force_attack">Why this matters?</a>
+            </article>
+            <article class="card" id="system-status-card"> 
+                <label class="l-chart">System Health</label>
+                <div class="card-grad" id="system-status-bar"></div> 
             </article>
         </section> 
     </main>

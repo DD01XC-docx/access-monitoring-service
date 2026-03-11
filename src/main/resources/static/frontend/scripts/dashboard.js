@@ -62,6 +62,12 @@ const CHART_CONFIG = [
         url:'/api/access/stat/agent-status',
         type: 'treemap',
         key: 'agentChart'
+    },
+    {
+        id: '#system-status-bar',
+        url: '/api/access/stat/health',
+        type: 'bar',
+        key: 'dbHealthChart'
     }
 ];
 
@@ -89,7 +95,7 @@ const TYPE_PRESETS = {
         dataLabels: {enabled: true}
     },
     treemap: {
-        colors: ['green', 'orange', 'red', 'blue'],
+        colors: ['#38bff8a2', '#17fa0795'],
         plotOptions: {
             treemap: {
                 distributed: true,
@@ -125,12 +131,12 @@ const TYPE_PRESETS = {
         colors: ['#38bdf8', '#fff200', '#dc465c', '#fa0707'],
         stroke: {
             curve: 'smooth',
-            width: 3
+            width: 2
         },
         markers: {
-            size: 4,
+            size: 2,
             hover: {
-                size: 6
+                size: 5
             }
         },
         legend: {
@@ -139,7 +145,7 @@ const TYPE_PRESETS = {
             horizontalAlign: 'left'
         },
         fill: {
-            opacity: 0.8
+            opacity: 0.7
         },
         xaxis: {
             type: 'category',
@@ -193,6 +199,12 @@ function renderChartOptions(data, config) {
         options.fill = defaultPreset.fill;
     }
 
+    if (config.key === 'dbHealthChart') {
+    options.series = [{
+        name: 'Status',
+        data: data
+    }];
+}
     if (data.categories) {
          const isDense24hAxis = config.type === 'area' && data.categories.length >= 20;
         options.xaxis = {
@@ -278,6 +290,5 @@ async function refreshDashboard() {
 }
 
 setInterval(refreshDashboard, 20000);
-
 
 document.addEventListener('DOMContentLoaded', initDashboard);

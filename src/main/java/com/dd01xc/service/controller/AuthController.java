@@ -4,6 +4,7 @@ import com.dd01xc.service.model.AccessEvent;
 import com.dd01xc.service.model.User;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,9 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import io.micrometer.core.ipc.http.HttpSender;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,6 +43,9 @@ public class AuthController {
     @Autowired
     private AccessRepository accessRepository;
 
+    @Autowired
+    private HttpServletRequest request;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         Optional<User> userOptional = findUserByEmailOrUsername(loginRequest.getEmail());
@@ -53,9 +61,10 @@ public class AuthController {
             response.put("role", user.getRole());
             return ResponseEntity.ok(response);
         }
-
-        accessEvent.setStatus(ACCESS_STATUS_FAILED);
-        accessRepository.save(accessEvent);
+        if (userOptional.isPresent()) {
+            accessEvent.setStatus(ACCESS_STATUS_FAILED);
+            accessRepository.save(accessEvent);
+        }
         return ResponseEntity.status(401).body(INVALID_CREDENTIALS_MESSAGE);
     }
 
@@ -88,6 +97,7 @@ public class AuthController {
     private AccessEvent createAccessEvent(String usernameOrEmail) {
         AccessEvent accessEvent = new AccessEvent();
         accessEvent.setUsernameOrEmail(usernameOrEmail);
+        accessEvent.setIpAddress(getClientIp(request));
         return accessEvent;
     }
     //valid
@@ -121,4 +131,12 @@ public class AuthController {
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
     }
+    //Ip-getting
+    private String getClientIp(HttpServletRequest request) {
+    String remoteAddr = request.getHeader("X-Forwarded-For");
+    if (remoteAddr == null || remoteAddr.isEmpty() || "unknown".equalsIgnoreCase(remoteAddr)) {
+        remoteAddr = request.getRemoteAddr();
+    }
+    return remoteAddr.contains(",") ? remoteAddr.split(",")[0].trim() : remoteAddr;
+}
 }
