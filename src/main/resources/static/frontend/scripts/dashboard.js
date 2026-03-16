@@ -68,6 +68,12 @@ const CHART_CONFIG = [
         url: '/api/access/stat/health',
         type: 'bar',
         key: 'dbHealthChart'
+    },
+    {
+        id: '#responce-time-сhart',
+        url: '/api/access/stat/responce-time',
+        type: 'boxPlot',
+        key: 'reponceTimeDistrib'
     }
 ];
 
@@ -169,6 +175,20 @@ const TYPE_PRESETS = {
                     return val + ' failed attempts';
                 }
             }
+        }
+    },
+    boxPlot: {
+        colors: ['green', 'orange'],
+        plotOptions: {
+            boxPlot: {
+                colors: {
+                    upper: '#00E396',
+                    lower: '#00B57A'
+                }
+            }
+        },
+        stroke: {
+            colors: ['#ffffff']
         }
     }
 };
@@ -290,11 +310,9 @@ async function fetchData(config, currentRange) {
             'Content-Type': 'application/json'
         }
     });
-
     if (!response.ok) {
-        // Если сервер ответил 401 или 403, значит токен протух
         if (response.status === 401 || response.status === 403) {
-            localStorage.removeItem('jwt'); // Очищаем старый токен
+            localStorage.removeItem('jwt');
             window.location.href = '/login.html';
         }
         throw new Error('Request failed: ' + response.status);
@@ -307,5 +325,4 @@ async function refreshDashboard() {
 }
 
 setInterval(refreshDashboard, 20000);
-
 document.addEventListener('DOMContentLoaded', initDashboard);

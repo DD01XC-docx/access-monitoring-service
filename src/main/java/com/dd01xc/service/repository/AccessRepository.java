@@ -14,57 +14,55 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
     //1h sql
     @Query(value = """
-        SELECT to_char(gs.minute, 'HH24:MI') AS bucket,
-        COALESCE(SUM(CASE WHEN ae.status = 'SUCCESS' THEN 1 END), 0) AS successful,
-        COALESCE(SUM(CASE WHEN ae.status = 'FAILED' THEN 1 END), 0) AS failed
+        SELECT to_char(gs.bucket_start, 'HH24:MI') AS bucket,
+        COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
+        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
         FROM generate_series(
-        date_trunc('minute', now()) - interval '59 minutes',
-        date_trunc('minute', now()), interval '10 minute') AS gs(minute)
+            date_trunc('minute', now()) - interval '59 minutes',
+            date_trunc('minute', now()),
+            interval '10 minute'
+        ) AS gs(bucket_start)
         LEFT JOIN access_events ae
-        ON ae.created_at >= gs.minute
-        AND ae.created_at < gs.minute + interval '10 minute'
-        AND ae.created_at >= date_trunc('minute', now()) - interval '59 minutes'
-        AND ae.created_at < date_trunc('minute', now()) + interval '1 minute'
-        GROUP BY gs.minute
-        ORDER BY gs.minute
+            ON ae.created_at >= gs.bucket_start
+            AND ae.created_at < gs.bucket_start + interval '10 minute'
+        GROUP BY gs.bucket_start
+        ORDER BY gs.bucket_start
         """, nativeQuery = true)
     List<Object[]> getStatsLastHourByMinute();
 
     //24h sql
     @Query(value = """
-        SELECT to_char(gs.hour, 'HH24:00') AS bucket,
-        COALESCE(SUM(CASE WHEN ae.status = 'SUCCESS' THEN 1 END), 0) AS successful,
-        COALESCE(SUM(CASE WHEN ae.status = 'FAILED' THEN 1 END), 0) AS failed
+        SELECT to_char(gs.bucket_start, 'HH24:00') AS bucket,
+        COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
+        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
         FROM generate_series(
-        date_trunc('hour', now()) - interval '23 hours',
-        date_trunc('hour', now()),
-        interval '1 hour'
-        ) AS gs(hour)
+            date_trunc('hour', now()) - interval '23 hours',
+            date_trunc('hour', now()),
+            interval '1 hour'
+        ) AS gs(bucket_start)
         LEFT JOIN access_events ae
-        ON date_trunc('hour', ae.created_at) = gs.hour
-        AND ae.created_at >= date_trunc('hour', now()) - interval '23 hours'
-        AND ae.created_at <  date_trunc('hour', now()) + interval '3 hour'
-        GROUP BY gs.hour
-        ORDER BY gs.hour
+            ON ae.created_at >= gs.bucket_start
+            AND ae.created_at < gs.bucket_start + interval '1 hour'
+        GROUP BY gs.bucket_start
+        ORDER BY gs.bucket_start
         """, nativeQuery = true)
     List<Object[]> getStatsLast24HoursByHour();
 
     //7days sql
     @Query(value = """
-        SELECT to_char(gs.day, 'DD Mon') AS bucket,
-        COALESCE(SUM(CASE WHEN ae.status = 'SUCCESS' THEN 1 END), 0) AS successful,
-        COALESCE(SUM(CASE WHEN ae.status = 'FAILED' THEN 1 END), 0) AS failed
+        SELECT to_char(gs.bucket_start, 'DD Mon') AS bucket,
+        COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
+        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
         FROM generate_series(
-        date_trunc('day', now()) - interval '6 days',
-        date_trunc('day', now()),
-        interval '1 day'
-        ) AS gs(day)
+            date_trunc('day', now()) - interval '6 days',
+            date_trunc('day', now()),
+            interval '1 day'
+        ) AS gs(bucket_start)
         LEFT JOIN access_events ae
-        ON date_trunc('day', ae.created_at) = gs.day
-        AND ae.created_at >= date_trunc('day', now()) - interval '6 days'
-        AND ae.created_at <  date_trunc('day', now()) + interval '1 day'
-        GROUP BY gs.day
-        ORDER BY gs.day
+            ON ae.created_at >= gs.bucket_start
+            AND ae.created_at < gs.bucket_start + interval '1 day'
+        GROUP BY gs.bucket_start
+        ORDER BY gs.bucket_start
         """, nativeQuery = true)
     List<Object[]> getStatsLast7DaysByDay();
 
@@ -87,4 +85,20 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
        "GROUP BY a.ipAddress " +
        "ORDER BY COUNT(a) DESC")
     List<Object[]> getTopFailedIps();
+
+    //responce-time
+    @Query(value = """
+        SELECT to_char(date_trunc('hour', ae.created_at), 'HH24:00') AS bucket,
+        MIN(ae.duration_ms) AS min,
+        percentile_cont(0.25) WITHIN GROUP (ORDER BY ae.duration_ms) AS val1,
+        percentile_cont(0.5) WITHIN GROUP (ORDER BY ae.duration_ms) AS median,
+        percentile_cont(0.75) WITHIN GROUP (ORDER BY ae.duration_ms) AS val3,
+        MAX(ae.duration_ms) AS max
+        FROM access_events ae
+        WHERE ae.created_at >= now() - interval '24 hours'
+        AND ae.duration_ms IS NOT NULL
+        GROUP BY date_trunc('hour', ae.created_at)
+        ORDER BY date_trunc('hour', ae.created_at)
+        """, nativeQuery=true)
+    List<Object[]> getResponceTime();
 }

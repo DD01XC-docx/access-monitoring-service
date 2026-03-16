@@ -51,11 +51,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        long startTime = System.nanoTime();
         Optional<User> userOptional = findUserByEmailOrUsername(loginRequest.getEmail());
         AccessEvent accessEvent = createAccessEvent(loginRequest.getEmail());
 
         if (isValidCredentials(userOptional, loginRequest.getPassword())) {
             accessEvent.setStatus(ACCESS_STATUS_SUCCESS);
+            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
             accessRepository.save(accessEvent);
             User user = userOptional.get();
             
@@ -68,20 +70,27 @@ public class AuthController {
             response.put("role", user.getRole());
             return ResponseEntity.ok(response);
         }
-        if (userOptional.isPresent()) {
-            accessEvent.setStatus(ACCESS_STATUS_FAILED);
-            accessRepository.save(accessEvent);
-        }
+        accessEvent.setStatus(ACCESS_STATUS_FAILED);
+        accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
+        accessRepository.save(accessEvent);
         return ResponseEntity.status(401).body(INVALID_CREDENTIALS_MESSAGE);
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        long startTime = System.nanoTime();
+        AccessEvent accessEvent = createAccessEvent(registerRequest.getEmail());
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            accessEvent.setStatus(ACCESS_STATUS_FAILED);
+            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
+            accessRepository.save(accessEvent);
             return ResponseEntity.badRequest().body(EMAIL_EXISTS_MESSAGE);
         }
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            accessEvent.setStatus(ACCESS_STATUS_FAILED);
+            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
+            accessRepository.save(accessEvent);
             return ResponseEntity.badRequest().body(USERNAME_EXISTS_MESSAGE);
         }
 
@@ -93,6 +102,11 @@ public class AuthController {
         user.setEnabled(true);
         user.setStatus(USER_STATUS_ACTIVE);
         userRepository.save(user);
+
+        accessEvent.setStatus(ACCESS_STATUS_SUCCESS);
+        accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
+        accessRepository.save(accessEvent);
+        
         return ResponseEntity.ok(REGISTER_SUCCESS_MESSAGE);
     }
     //checkAuth

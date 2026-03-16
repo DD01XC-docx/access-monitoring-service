@@ -77,7 +77,6 @@ public class AccessController {
         ));
     }
     
-
     @GetMapping("/stat/top-failed")
     public ChartDataDTO getTopFailedAccounts() {
         // top failed accounts for card
@@ -156,7 +155,6 @@ public class AccessController {
         health.add(accessDb);
         return health;
 }
-    
     private boolean isRepoUp(JpaRepository<?, ?> repo) {
         try {
             repo.count();
@@ -193,7 +191,7 @@ public class AccessController {
                 )
         );
     }
-    //secure if graph is empty!
+    //secure if graph is empty
     private String extractCategory(Object[] row) {
         if (row.length == 0 || row[0] == null) {
             return "00:00";
@@ -206,15 +204,46 @@ public class AccessController {
     }
         return number.intValue();
     }
-
     private String extractAccount(Object[] row) {
         if (row.length == 0 || row[0] == null) {
         return "unknown";
         }
         return row[0].toString();
     }
-
      private boolean isBetween(int value, int minInclusive, int maxInclusive) {
         return value >= minInclusive && value <= maxInclusive;
+    }
+
+    @GetMapping("/stat/responce-time")
+    public Map<String, Object> getResponceTimeDistribution() {
+        List<Object[]> rawData = accessRepository.getResponceTime();
+        List<LatencyData> result = new ArrayList<>();
+
+        for (Object[] row : rawData) {
+            result.add(new LatencyData(
+                row[0].toString(),
+                ((Number) row[1]).doubleValue(),
+                ((Number) row[2]).doubleValue(),
+                ((Number) row[3]).doubleValue(),
+                ((Number) row[4]).doubleValue(),
+                ((Number) row[5]).doubleValue()
+            ));
+        }
+
+        Map<String, Object> seriesData = new HashMap<>();
+        seriesData.put("name", "Response time");
+        seriesData.put("data", result);
+
+        return Map.of("series", List.of(seriesData));
+    }
+
+    public static class LatencyData {
+        public String x;
+        public Double[] y;
+
+        public LatencyData(String x, Double min, Double val1, Double median, Double val3, Double max) {
+            this.x = x;
+            this.y = new Double[]{min, val1, median, val3, max};
+        }
     }
 }
