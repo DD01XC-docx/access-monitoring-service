@@ -14,10 +14,8 @@ import javax.crypto.SecretKey;
 @Service
 public class JwtService {
     
-    // ВНИМАНИЕ: Keys.secretKeyFor генерирует НОВЫЙ ключ при каждом запуске.
-    // Для продакшена используйте Keys.hmacShaKeyFor(BASE64_STRING.getBytes())
     private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
-    private final long jwtExpiration = 86400000; // 24 часа
+    private final long jwtExpiration = 86400000;
     
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -37,7 +35,7 @@ public class JwtService {
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload(); // В 0.12+ вместо getBody() используется getPayload()
+                .getPayload();
     }
     
     private Boolean isTokenExpired(String token) {

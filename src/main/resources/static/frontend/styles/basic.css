@@ -12,6 +12,7 @@
 } 
 header {
   z-index: 1000;
+  max-height: 80px;
 }
 body {
   background: linear-gradient(180deg, #0d1420 0%, #101927 100%);
@@ -45,6 +46,7 @@ a:hover {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position:sticky;
   top: 0;
+  height: auto;
 }
 .nav-logo {
   transition: 0.3s;
@@ -67,6 +69,7 @@ a:hover {
   border-radius: 9px;
   color: var(--text-mut);
   transition: 0.3s;
+  max-height: 60px;
 }
 
 .nav-tab:hover {
@@ -228,6 +231,30 @@ a:hover {
 #agent-status-art a:hover,
 #fim-art a:hover {
   color: var(--text-main);
+}
+
+#profile-btn-container {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  background-color: var(--bg-light);
+  width: 150px;
+  border-radius: 8px;
+  max-height: 60px;
+}
+
+#profile-btn-container img {
+  height: 55px;
+  width: 55px;
+}
+
+#profile-img:hover {
+  background: #5d7cff;
+}
+
+#profile-btn-container:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transition: 0.2s;
 }
 
 @media (max-width: 900px) {

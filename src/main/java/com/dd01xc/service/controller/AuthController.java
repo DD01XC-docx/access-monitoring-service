@@ -1,163 +1,54 @@
 package com.dd01xc.service.controller;
 
-import com.dd01xc.service.model.AccessEvent;
-import com.dd01xc.service.model.User;
-import com.dd01xc.service.repository.AccessRepository;
-import com.dd01xc.service.repository.UserRepository;
-import com.dd01xc.service.service.JwtService;
+import com.dd01xc.service.model.LoginRequest;
+import com.dd01xc.service.model.LoginResponse;
+import com.dd01xc.service.model.RegisterRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import com.dd01xc.service.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import com.dd01xc.service.model.RegisterResponse;
+
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
-    private static final String ACCESS_STATUS_SUCCESS = "SUCCESS";
-    private static final String ACCESS_STATUS_FAILED = "FAILED";
-    private static final String USER_ROLE = "USER";
-    private static final String USER_STATUS_ACTIVE = "ACTIVE";
-    private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid credentials";
-    private static final String EMAIL_EXISTS_MESSAGE = "Email already exists";
-    private static final String USERNAME_EXISTS_MESSAGE = "Username already exists";
-    private static final String REGISTER_SUCCESS_MESSAGE = "User registered successfully";
 
-    @Autowired
-    private UserRepository userRepository;
+    private final AuthService authService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AccessRepository accessRepository;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private HttpServletRequest request;
+    AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        long startTime = System.nanoTime();
-        Optional<User> userOptional = findUserByEmailOrUsername(loginRequest.getEmail());
-        AccessEvent accessEvent = createAccessEvent(loginRequest.getEmail());
-
-        if (isValidCredentials(userOptional, loginRequest.getPassword())) {
-            accessEvent.setStatus(ACCESS_STATUS_SUCCESS);
-            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-            accessRepository.save(accessEvent);
-            User user = userOptional.get();
-            
-            // Generate JWT token
-            String jwtToken = jwtService.generateToken(user.getUsername(), user.getRole());
-            
-            Map<String, String> response = new HashMap<>();
-            response.put("token", jwtToken);
-            response.put("username", user.getUsername());
-            response.put("role", user.getRole());
-            return ResponseEntity.ok(response);
-        }
-        accessEvent.setStatus(ACCESS_STATUS_FAILED);
-        accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-        accessRepository.save(accessEvent);
-        return ResponseEntity.status(401).body(INVALID_CREDENTIALS_MESSAGE);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) { 
+        String clientIp = getClientIp(httpRequest);
+        LoginResponse response = authService.login(request, clientIp);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        long startTime = System.nanoTime();
-        AccessEvent accessEvent = createAccessEvent(registerRequest.getEmail());
-
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            accessEvent.setStatus(ACCESS_STATUS_FAILED);
-            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-            accessRepository.save(accessEvent);
-            return ResponseEntity.badRequest().body(EMAIL_EXISTS_MESSAGE);
-        }
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            accessEvent.setStatus(ACCESS_STATUS_FAILED);
-            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-            accessRepository.save(accessEvent);
-            return ResponseEntity.badRequest().body(USERNAME_EXISTS_MESSAGE);
-        }
-
-        User user = new User();
-        user.setUsername(registerRequest.getUsername());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRole(USER_ROLE);
-        user.setEnabled(true);
-        user.setStatus(USER_STATUS_ACTIVE);
-        userRepository.save(user);
-
-        accessEvent.setStatus(ACCESS_STATUS_SUCCESS);
-        accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-        accessRepository.save(accessEvent);
-        
-        return ResponseEntity.ok(REGISTER_SUCCESS_MESSAGE);
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+        String clientIp = getClientIp(httpRequest);
+        RegisterResponse response = authService.register(request, clientIp);
+        return ResponseEntity.ok(response);
     }
-    //checkAuth
+
     @PostMapping("/check")
     public ResponseEntity<?> checkAuth() {
-        return ResponseEntity.ok("Authenticated successfully");
+        String response  = authService.checkAuth();
+        return ResponseEntity.ok(response);
     }
-    //userfinder
-    private Optional<User> findUserByEmailOrUsername(String emailOrUsername) {
-        return userRepository.findByEmail(emailOrUsername)
-                .or(() -> userRepository.findByUsername(emailOrUsername));
-    }
-    //access
-    private AccessEvent createAccessEvent(String usernameOrEmail) {
-        AccessEvent accessEvent = new AccessEvent();
-        accessEvent.setUsernameOrEmail(usernameOrEmail);
-        accessEvent.setIpAddress(getClientIp(request));
-        return accessEvent;
-    }
-    //valid
-    private boolean isValidCredentials(Optional<User> userOptional, String rawPassword) {
-        return userOptional.isPresent() && passwordEncoder.matches(rawPassword, userOptional.get().getPassword());
-    }
-    //login
-    public static class LoginRequest {
-        private String email;
-        private String password;
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-    }
-    //register
-    public static class RegisterRequest {
-        private String username;
-        private String email;
-        private String password;
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-    }
-    //forgot
-    public static class ForgotPasswordRequest {
-        private String email;
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-    }
-    //Ip-getting
+
     private String getClientIp(HttpServletRequest request) {
     String remoteAddr = request.getHeader("X-Forwarded-For");
     if (remoteAddr == null || remoteAddr.isEmpty() || "unknown".equalsIgnoreCase(remoteAddr)) {

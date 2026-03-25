@@ -1,7 +1,7 @@
 package com.dd01xc.service.model;
 
 import java.util.List;
-
+//mainChartDTO
 public class ChartDataDTO {
 
     private List<String> categories;
@@ -31,6 +31,7 @@ public class ChartDataDTO {
         this.series = series;
     }
 
+    //series
     public static class Series {
 
         private String name;
@@ -58,6 +59,17 @@ public class ChartDataDTO {
 
         public void setData(List<Integer> data) {
             this.data = data;
+        }
+    }
+
+    //latency
+    public static class LatencyData {
+        public String x;
+        public Double[] y;
+
+        public LatencyData(String x, Double min, Double val1, Double median, Double val3, Double max) {
+            this.x = x;
+            this.y = new Double[]{min, val1, median, val3, max};
         }
     }
 }
