@@ -10,13 +10,36 @@ import java.util.List;
 @Repository
 public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
+
+    //exists-logic
     long countByStatus(String status);
+
+    @Query(value = """
+        SELECT COUNT(*)
+        FROM access_events ae
+        WHERE ae.status = 'FAILED'
+        AND EXISTS (
+            SELECT 1
+            FROM users u
+            WHERE u.email = ae.username_or_email
+            OR u.username = ae.username_or_email
+        )
+        """, nativeQuery = true)
+    long countFailedForExistingAccounts();
 
     //1h sql
     @Query(value = """
         SELECT to_char(gs.bucket_start, 'HH24:MI') AS bucket,
         COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
-        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
+        COUNT(ae.id) FILTER (
+            WHERE ae.status = 'FAILED'
+            AND EXISTS (
+                SELECT 1
+                FROM users u
+                WHERE u.email = ae.username_or_email
+                OR u.username = ae.username_or_email
+            )
+        ) AS failed
         FROM generate_series(
             date_trunc('minute', now()) - interval '59 minutes',
             date_trunc('minute', now()),
@@ -34,7 +57,15 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
     @Query(value = """
         SELECT to_char(gs.bucket_start, 'HH24:00') AS bucket,
         COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
-        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
+        COUNT(ae.id) FILTER (
+            WHERE ae.status = 'FAILED'
+            AND EXISTS (
+                SELECT 1
+                FROM users u
+                WHERE u.email = ae.username_or_email
+                OR u.username = ae.username_or_email
+            )
+        ) AS failed
         FROM generate_series(
             date_trunc('hour', now()) - interval '23 hours',
             date_trunc('hour', now()),
@@ -52,7 +83,15 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
     @Query(value = """
         SELECT to_char(gs.bucket_start, 'DD Mon') AS bucket,
         COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
-        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
+        COUNT(ae.id) FILTER (
+            WHERE ae.status = 'FAILED'
+            AND EXISTS (
+                SELECT 1
+                FROM users u
+                WHERE u.email = ae.username_or_email
+                OR u.username = ae.username_or_email
+            )
+        ) AS failed
         FROM generate_series(
             date_trunc('day', now()) - interval '6 days',
             date_trunc('day', now()),
@@ -74,6 +113,12 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
         FROM access_events ae
         WHERE ae.status = 'FAILED'
         AND ae.created_at >= now() - interval '24 hours'
+        AND EXISTS (
+            SELECT 1
+            FROM users u
+            WHERE u.email = ae.username_or_email
+            OR u.username = ae.username_or_email
+        )
         GROUP BY ae.username_or_email
         ORDER BY failed_count DESC
         LIMIT 5
@@ -82,6 +127,9 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
         //IP-access
     @Query("SELECT a.ipAddress, COUNT(a) FROM AccessEvent a " +
        "WHERE a.status = 'FAILED' " +
+       "AND EXISTS (" +
+       "SELECT 1 FROM User u " +
+       "WHERE u.email = a.usernameOrEmail OR u.username = a.usernameOrEmail) " +
        "GROUP BY a.ipAddress " +
        "ORDER BY COUNT(a) DESC")
     List<Object[]> getTopFailedIps();

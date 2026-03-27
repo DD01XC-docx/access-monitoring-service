@@ -26,9 +26,6 @@ public class AuthService {
     private static final String USER_ROLE = "USER";
     private static final String USER_STATUS_ACTIVE = "ACTIVE";
     private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid credentials";
-    private static final String EMAIL_EXISTS_MESSAGE = "Email already exists";
-    private static final String USERNAME_EXISTS_MESSAGE = "Username already exists";
-    private static final String REGISTER_SUCCESS_MESSAGE = "User registered successfully";
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final AccessRepository accessRepository;
@@ -43,7 +40,7 @@ public class AuthService {
     
     //log
     
-    @Transactional
+    @Transactional(noRollbackFor = InvalidCredentialsException.class)
     public LoginResponse login(LoginRequest loginRequest, String clientIp) {
 
         long startTime = System.nanoTime();
@@ -65,7 +62,7 @@ public class AuthService {
 
     //reg
 
-    @Transactional
+    @Transactional(noRollbackFor = InvalidCredentialsException.class)
     public RegisterResponse register(RegisterRequest registerRequest, String clientIp) {
         long startTime = System.nanoTime();
         AccessEvent accessEvent = createAccessEvent(registerRequest.getEmail(), clientIp);

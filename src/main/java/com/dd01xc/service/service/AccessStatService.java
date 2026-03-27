@@ -67,8 +67,9 @@ public class AccessStatService {
 
     public Map<String, Object> getSlaStatus() {
 
-        long total = accessRepository.count();
         long success = accessRepository.countByStatus(STATUS_SUCCESS);
+        long failed = accessRepository.countFailedForExistingAccounts();
+        long total = success + failed;
         int percentage = (total > 0) ? (int) ((double) success / total * 100) : 0;
 
         return Map.of("series", List.of(percentage));
