@@ -1,24 +1,43 @@
-# Access Monitoring Service (AMC)
+# Access Monitoring Service
 
-A full-stack pet project focused on **authentication flows** and **security access analytics**.
+Access Monitoring Service is a full-stack portfolio project focused on authentication activity tracking, access analytics, and dashboard-driven monitoring.
 
-This application combines a Spring Boot backend (REST API + PostgreSQL + JPA) with a static frontend (HTML/CSS/JavaScript) to simulate how login activity can be collected and visualized on a security-style dashboard.
+The application combines a Spring Boot backend, PostgreSQL persistence, and a static frontend to simulate how login events can be collected, stored, and transformed into useful operational metrics.
+
+## Overview
+
+The project is centered around access events generated during authentication flows.  
+Each event can capture data such as:
+
+- username or email
+- authentication status
+- request duration
+- IP address
+- event timestamp
+
+These events are then used to power a monitoring dashboard with visual summaries and recent activity logs.
 
 ## Features
 
-- User registration and login endpoints
-- Access event tracking for successful/failed login attempts
-- Dashboard analytics:
-  - Access statistics by time range (`1h`, `24h`, `7d`)
-  - SLA success rate card
-  - Top failed accounts (last 24h)
-  - Heatmap-like alert level visualization
-- PostgreSQL-backed persistence
-- Docker Compose for local database setup
+- User registration and login
+- JWT-based authentication flow
+- Access event persistence in PostgreSQL
+- Dashboard analytics for authentication activity
+- Time-based access statistics (`1h`, `24h`, `7d`)
+- SLA status card
+- Alert level visualization
+- Top failed accounts chart
+- Agent status overview
+- System health view
+- Response time distribution chart
+- Recent access logs feed on the dashboard
+- Collapsible logs section
+- Quick actions card with dashboard shortcuts
 
 ## Tech Stack
 
-**Backend**
+### Backend
+
 - Java 21
 - Spring Boot 3
 - Spring Web
@@ -26,14 +45,16 @@ This application combines a Spring Boot backend (REST API + PostgreSQL + JPA) wi
 - Spring Security
 - PostgreSQL
 
-**Frontend**
+### Frontend
+
 - HTML5
 - CSS3
 - Vanilla JavaScript
-- ApexCharts (for dashboard charts)
+- ApexCharts
 
-**DevOps / Tooling**
-- Maven Wrapper (`mvnw`)
+### Tooling
+
+- Maven Wrapper
 - Docker Compose
 
 ## Project Structure
@@ -41,54 +62,60 @@ This application combines a Spring Boot backend (REST API + PostgreSQL + JPA) wi
 ```text
 access-monitoring-service/
 ├─ src/main/java/com/dd01xc/service/
-│  ├─ config/              # Security configuration
-│  ├─ controller/          # REST endpoints (auth + access stats)
-│  ├─ model/               # JPA entities + DTOs
-│  ├─ repository/          # JPA repositories + native SQL analytics queries
-│  └─ init/                # Initial data bootstrapping
+│  ├─ config/              # Security configuration and JWT filter
+│  ├─ controller/          # REST controllers
+│  ├─ init/                # Initial data bootstrapping
+│  ├─ model/               # Entities and DTOs
+│  ├─ repository/          # JPA repositories and analytics queries
+│  ├─ service/             # Business logic
+│  └─ service/exception/   # Exception handling
 ├─ src/main/resources/
 │  ├─ application.properties
-│  └─ static/              # Frontend pages, scripts, styles, assets
-├─ docker-compose.yml      # PostgreSQL container
+│  └─ static/              # Frontend pages, scripts, styles, images
+├─ docker-compose.yml
 └─ pom.xml
 ```
 
-## Quick Start
+## Dashboard Highlights
 
-### 1) Prerequisites
+The dashboard is designed as a compact monitoring surface for authentication-related activity.  
+It currently includes:
+
+- activity trends over multiple time ranges
+- failed login account analysis
+- latency distribution monitoring
+- database health visibility
+- recent access logs for quick inspection
+- shortcut actions for common dashboard tasks
+
+## Running the Project
+
+### Prerequisites
 
 - Java 21+
-- Docker Desktop (or Docker Engine)
+- Docker
 - Git
 
-### 2) Start PostgreSQL
+### Start PostgreSQL
 
 ```bash
 docker compose up -d
 ```
 
-This starts PostgreSQL with:
-- DB: `security_db`
-- User: `postgres`
-- Password: `root`
-- Host port: `5444`
+Default local database setup:
 
-### 3) Run the application
+- database: `security_db`
+- user: `postgres`
+- password: `root`
+- port: `5444`
 
-**Windows (PowerShell / CMD):**
-```bash
-./mvnw.cmd spring-boot:run
-```
+### Run the application
 
-**Git Bash / Linux / macOS:**
 ```bash
 ./mvnw spring-boot:run
 ```
 
-The app will start on the default Spring Boot port:
-- `http://localhost:8080`
-
-### 4) Open the UI
+### Open in browser
 
 - Landing page: `http://localhost:8080/index.html`
 - Login: `http://localhost:8080/login.html`
@@ -97,53 +124,52 @@ The app will start on the default Spring Boot port:
 
 ## API Overview
 
-### Auth
+### Authentication
 
 - `POST /api/auth/register`
-  - Registers a new user
 - `POST /api/auth/login`
-  - Checks credentials, stores access event, returns user metadata
 
 ### Access Analytics
 
 - `GET /api/access/stat/hourly?range=24h`
-  - Returns time-bucketed successful/failed login stats
 - `GET /api/access/stat/sla`
-  - Returns success-rate percentage
+- `GET /api/access/stat/alert-lvls?range=24h`
 - `GET /api/access/stat/top-failed`
-  - Returns top failed accounts in the last 24h
+- `GET /api/access/stat/agent-status`
+- `GET /api/access/stat/health`
+- `GET /api/access/stat/responce-time`
+- `GET /api/access/logs/recent`
 
-## Current Limitations
+## Current Status
 
-This is a learning/pet project and currently includes simplified security behavior:
+This repository is an active portfolio and learning project.  
+The main goal is to demonstrate practical full-stack development with a focus on:
 
-- Spring Security is configured with `permitAll()` for all routes
-- Login response returns a placeholder token (`jwt-token-placeholder`)
-- No role-based authorization guards on API endpoints yet
-- Limited automated testing at this stage
+- backend architecture with Spring Boot
+- relational data modeling and analytics queries
+- frontend integration with authenticated APIs
+- dashboard-oriented UI development
+- iterative feature design and refinement
 
 ## Roadmap
 
-- [✓] Implement real JWT authentication
-- [ ] Add request validation and global exception handling
-- [ ] Add unit/integration tests for controllers and repositories
-- [ ] Add role-based authorization for sensitive endpoints
-- [ ] Add CI pipeline (build + test checks)
-- [ ] Add production-ready deployment configuration
+- [x] Implement authentication flow
+- [x] Persist access events
+- [x] Add dashboard analytics
+- [x] Add recent access logs feed
+- [x] Add quick actions dashboard card
+- [ ] Build profile/settings page
+- [ ] Improve validation and error handling
+- [ ] Expand automated testing
+- [ ] Refine authorization rules
+- [ ] Continue dashboard UX improvements
 
-## Why This Project
+## Notes
 
-This repository demonstrates my ability to:
-
-- Build end-to-end full-stack functionality
-- Design REST APIs and connect them to a frontend
-- Model and query relational data for analytics dashboards
-- Organize a Java/Spring project with clear package structure
-- Use Docker for reproducible local infrastructure
+- The frontend is intentionally implemented with static HTML, CSS, and JavaScript.
+- The project is structured to stay understandable while still covering end-to-end functionality.
+- Some areas are intentionally lightweight and will continue to evolve over time.
 
 ## License
 
-This project is distributed for educational and portfolio purposes.
-
-
-
+This project is maintained for educational and portfolio purposes.
