@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-        <link rel="stylesheet" href="frontend/styles/basic.css">
+        <link rel="stylesheet" href="frontend/styles/dashboard.css">
 </head>
 <body>
     <svg style="display:none">
@@ -91,7 +91,35 @@
                 <label class="l-chart">Latency</label>
                 <div class="card-grad" id="responce-time-сhart"></div> 
             </article>
+            <article class="card" id="quick-actions-card">
+                <label class="l-chart">Quick Actions</label>
+                <div class="quick-actions-media">
+                    <img src="frontend/images/action-card-image.png" alt="Quick actions illustration">
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-btn" type="button" onclick="refreshDashboard()">Refresh dashboard</button>
+                    <button class="quick-btn" type="button" onclick="scrollToLogs()">Open recent logs</button>
+                    <a class="quick-btn quick-link" href="/documentation.html">Documentation</a>
+                    <a class="quick-btn quick-link" href="/contact.html">Contact us</a>
+                    <button class="quick-btn quick-btn-secondary" type="button" onclick="openProfilePlaceholder()">My profile</button>
+                    <button class="quick-btn quick-btn-secondary" type="button" onclick="logout()">Log out</button>
+                </div>
+            </article>
         </section> 
+        <section class="logs-section">
+            <article class="logs-card" id="logs-card">
+                <div class="logs-header">
+                    <div>
+                        <h2>Recent Access Logs</h2>
+                        <p>Latest authentication activity from your system.</p>
+                    </div>
+                    <button id="logs-toggle" class="logs-toggle" type="button" onclick="toggleLogsPanel()">Collapse</button>
+                </div>
+                <div id="logs-list" class="logs-list">
+                    <div class="log-empty">Loading logs...</div>
+                </div>
+            </article>
+        </section>
     </main>
     <footer>
 

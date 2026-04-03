@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.dd01xc.service.model.ChartDataDTO;
+import com.dd01xc.service.model.AccessEvent;
 import com.dd01xc.service.model.ChartDataDTO.LatencyData;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
@@ -109,6 +110,9 @@ public class AccessStatService {
         // top failed accounts for card
         List<Object[]> dbRows = accessRepository.getTopFailedAccountsLast24Hours();
 
+        List<String> categories = new ArrayList<>();
+        List<Integer> failedCounts = new ArrayList<>();
+
         //empty if failed
         if (dbRows.isEmpty()) {
             return new ChartDataDTO(
@@ -117,12 +121,11 @@ public class AccessStatService {
             );
         }
 
-        List<String> categories = new ArrayList<>();
-        List<Integer> failedCounts = new ArrayList<>();
-
         for (Object[] row : dbRows) {
-        categories.add(extractAccount(row));
-        failedCounts.add(extractNumber(row, 1));
+            String account = extractAccount(row);
+            int failedCount = extractNumber(row, 1);
+            categories.add(account);
+            failedCounts.add(failedCount);
         }
 
         return new ChartDataDTO(
@@ -223,6 +226,10 @@ public class AccessStatService {
         seriesData.put("data", result);
 
         return Map.of("series", List.of(seriesData));
+    }
+
+    public List<AccessEvent> getRecentLogs() {
+        return accessRepository.findTop10ByOrderByCreatedAtDesc();
     }
 
     //extra-help-functions

@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
+    List<AccessEvent> findTop10ByOrderByCreatedAtDesc();
 
     //exists-logic
     long countByStatus(String status);

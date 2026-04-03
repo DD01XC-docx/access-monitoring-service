@@ -1,5 +1,6 @@
 package com.dd01xc.service.controller;
 
+import com.dd01xc.service.model.AccessEvent;
 import com.dd01xc.service.model.ChartDataDTO;
 
 import com.dd01xc.service.service.AccessStatService;
@@ -62,5 +63,10 @@ public class AccessController {
     @GetMapping("/stat/responce-time")
     public Map<String, Object> getResponceTimeDistribution() {
         return accessStatService.getResponceTimeDistribution();
+    }
+
+    @GetMapping("/logs/recent")
+    public List<AccessEvent> getRecentLogs() {
+        return accessStatService.getRecentLogs();
     }
 }

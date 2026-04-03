@@ -264,7 +264,7 @@ async function initDashboard() {
         currentRange = e.target.value;
         refreshDashboard(); 
     });
-    await Promise.all(CHART_CONFIG.map(config => syncChart(config)));
+    await refreshDashboard();
 }
 
 function buildRequestUrl(config, currentRange) {
@@ -321,7 +321,98 @@ async function fetchData(config, currentRange) {
 }
 
 async function refreshDashboard() {
-    await Promise.all(CHART_CONFIG.map(config => syncChart(config)));
+    await Promise.all([
+        ...CHART_CONFIG.map(config => syncChart(config)),
+        loadRecentLogs()
+    ]);
+}
+
+async function loadRecentLogs() {
+    const list = document.getElementById('logs-list');
+    if (!list) return;
+
+    try {
+        const logs = await fetchData({ url: '/api/access/logs/recent' }, currentRange);
+
+        if (!Array.isArray(logs) || logs.length === 0) {
+            list.innerHTML = '<div class="log-empty">No logs found yet.</div>';
+            return;
+        }
+
+        list.innerHTML = logs.map(log => {
+            const status = (log.status || 'UNKNOWN').toUpperCase();
+            const statusClass = status === 'SUCCESS' ? 'log-status-success' : 'log-status-failed';
+            const createdAt = formatLogDate(log.createdAt);
+            const user = escapeHtml(log.usernameOrEmail || 'unknown');
+            const ip = escapeHtml(log.ipAddress || 'n/a');
+
+            return `
+                <div class="log-item">
+                    <div class="log-user">
+                        <span class="log-label">User</span>
+                        <span class="log-value">${user}</span>
+                    </div>
+                    <div class="log-status">
+                        <span class="log-label">Status</span>
+                        <span class="log-status-badge ${statusClass}">${escapeHtml(status)}</span>
+                    </div>
+                    <div class="log-ip">
+                        <span class="log-label">IP Address</span>
+                        <span class="log-value">${ip}</span>
+                    </div>
+                    <div class="log-time">
+                        <span class="log-label">Created</span>
+                        <span class="log-value">${escapeHtml(createdAt)}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        list.innerHTML = '<div class="log-empty">Failed to load logs.</div>';
+        console.error('Log load error:', error);
+    }
+}
+
+function formatLogDate(value) {
+    if (!value) return 'n/a';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString();
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+function toggleLogsPanel() {
+    const card = document.getElementById('logs-card');
+    const button = document.getElementById('logs-toggle');
+    if (!card || !button) return;
+
+    card.classList.toggle('collapsed');
+    button.textContent = card.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+}
+
+function scrollToLogs() {
+    const logsSection = document.querySelector('.logs-section');
+    if (!logsSection) return;
+    logsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function logout() {
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
+    window.location.href = '/login.html';
+}
+
+function openProfilePlaceholder() {
+    window.location.href = '/documentation.html';
 }
 
 setInterval(refreshDashboard, 20000);
