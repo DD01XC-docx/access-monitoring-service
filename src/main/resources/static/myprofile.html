@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My profile</title>
+    <link rel="stylesheet" href="frontend/styles/myprofile.css">
+</head>
+<body>
+    <header id="header" class="header-nav-panel">
+        <a class="nav-left" href="/dashboard.html" aria-label="Go to dashboard">
+            <div style="width: 70px; height:70px;" class="nav-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11 2.04935V13H21.9506C21.4489 18.0533
+                        17.1853 22 12 22C6.47715 22 2 17.5228 2 12C2
+                        6.81462 5.94668 2.55107 11 2.04935ZM13 0.542847C18.5535
+                        1.02121 22.9788 5.4465 23.4571 11H13V0.542847Z">
+                    </path>
+                </svg>
+            </div>
+        </a>
+        <nav id="navigation-top">
+            <a class="nav-tab" href="/dashboard.html">Back to Dashboard</a>
+            <span class="nav-tab active">My Profile</span>
+        </nav>
+    </header>
+
+    <section class="profile-section" id="profile-section">
+    <div class="profile-header-card">
+        <div class="profile-avatar">E</div>
+        <div class="profile-header-info">
+            <h2>Eivind</h2>
+            <p>Full-stack Developer</p>
+            <span class="profile-status">Monitoring access events</span>
+        </div>
+        <button class="profile-edit-btn" type="button">Edit profile</button>
+    </div>
+
+    <div class="profile-grid">
+        <article class="profile-card">
+            <h3>Account Info</h3>
+            <div class="profile-row">
+                <span>Full name</span>
+                <strong>Eivind Hansen</strong>
+            </div>
+            <div class="profile-row">
+                <span>Email</span>
+                <strong>heivind23@example.com</strong>
+            </div>
+            <div class="profile-row">
+                <span>Role</span>
+                <strong>User</strong>
+            </div>
+            <div class="profile-row">
+                <span>Timezone</span>
+                <strong>Europe/Oslo</strong>
+            </div>
+        </article>
+
+        <article class="profile-card">
+            <h3>Preferences</h3>
+            <div class="profile-row">
+                <label for="default-range">Default range</label>
+                <select id="default-range">
+                    <option value="1h">Last hour</option>
+                    <option value="24h" selected>Last 24 hours</option>
+                    <option value="7d">Last 7 days</option>
+                </select>
+            </div>
+            <div class="profile-row">
+                <label for="theme-select">Theme</label>
+                <select id="theme-select">
+                    <option value="dark" selected>Dark</option>
+                    <option value="light">Light</option>
+                    <option value="auto">Auto</option>
+                </select>
+            </div>
+            <div class="profile-row">
+                <span>Auto refresh</span>
+                <input type="checkbox" checked>
+            </div>
+            <div class="profile-row">
+                <span>Show recent logs first</span>
+                <input type="checkbox" checked>
+            </div>
+        </article>
+
+        <article class="profile-card">
+            <h3>Security</h3>
+            <div class="profile-row">
+                <span>Last login</span>
+                <strong>03 Apr 2026, 09:42</strong>
+            </div>
+            <div class="profile-row">
+                <span>Last IP</span>
+                <strong>192.168.1.24</strong>
+            </div>
+            <div class="profile-row">
+                <span>Password updated</span>
+                <strong>12 days ago</strong>
+            </div>
+            <div class="profile-row">
+                <span>2FA</span>
+                <strong>Disabled</strong>
+            </div>
+            <button class="profile-secondary-btn" type="button">Log out all sessions</button>
+        </article>
+
+        <article class="profile-card profile-card-wide">
+            <h3>Recent Activity</h3>
+            <div class="activity-item">
+                <span>Successful login</span>
+                <strong>Today, 09:42</strong>
+            </div>
+            <div class="activity-item">
+                <span>Changed dashboard range to 24h</span>
+                <strong>Today, 09:10</strong>
+            </div>
+            <div class="activity-item">
+                <span>Viewed security alerts</span>
+                <strong>Yesterday, 18:27</strong>
+            </div>
+        </article>
+    </div>
+</section>
+
+</body>
+</html>
