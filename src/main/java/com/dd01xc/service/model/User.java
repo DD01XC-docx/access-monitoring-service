@@ -39,6 +39,12 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private LocalDateTime lastLogin;
+
+    @Column(nullable = false)
+    private String lastIp;
+
     public Long getId() {
         return id;
     }
@@ -99,10 +105,32 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public String getLastIp() {
+        return lastIp;
+    }
+
+    public void setLastIp(String lastIp) {
+        this.lastIp = lastIp;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
+        }
+        if (lastLogin == null) {
+            lastLogin = createdAt;
+        }
+        if (lastIp == null || lastIp.isBlank()) {
+            lastIp = "UNKNOWN";
         }
     }
 }

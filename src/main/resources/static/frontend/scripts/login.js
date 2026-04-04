@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
-        console.log("Кнопка нажата, форма отправляется!");
         e.preventDefault();
             
         const email = document.getElementById('email').value;

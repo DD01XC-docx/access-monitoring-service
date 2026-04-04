@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/dashboard.html").permitAll()
                 .requestMatchers("/dashboard").authenticated()
                 .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/api/profile/**").authenticated()
                 .anyRequest().authenticated()
             ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

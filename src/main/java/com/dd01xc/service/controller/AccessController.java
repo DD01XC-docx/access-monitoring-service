@@ -2,7 +2,6 @@ package com.dd01xc.service.controller;
 
 import com.dd01xc.service.model.AccessEvent;
 import com.dd01xc.service.model.ChartDataDTO;
-
 import com.dd01xc.service.service.AccessStatService;
 
 import org.springframework.web.bind.annotation.CrossOrigin;

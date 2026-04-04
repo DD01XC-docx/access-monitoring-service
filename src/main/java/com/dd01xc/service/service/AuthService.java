@@ -1,5 +1,6 @@
 package com.dd01xc.service.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -54,6 +55,9 @@ public class AuthService {
 
         User user = userOptional.get();
         String token = jwtService.generateToken(user.getUsername(), user.getRole());
+        user.setLastLogin(LocalDateTime.now());
+        user.setLastIp(clientIp);
+        userRepository.save(user);
 
         saveAccessEvent(accessEvent, ACCESS_STATUS_SUCCESS, startTime);
         return new LoginResponse(token, user.getUsername(), user.getRole());
@@ -86,6 +90,8 @@ public class AuthService {
         user.setRole(USER_ROLE);
         user.setEnabled(true);
         user.setStatus(USER_STATUS_ACTIVE);
+        user.setLastLogin(LocalDateTime.now());
+        user.setLastIp(clientIp);
         userRepository.save(user);
         
         saveAccessEvent(accessEvent, ACCESS_STATUS_SUCCESS, startTime);

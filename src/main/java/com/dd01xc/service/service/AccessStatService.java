@@ -8,8 +8,8 @@ import java.util.Map;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import com.dd01xc.service.model.ChartDataDTO;
 import com.dd01xc.service.model.AccessEvent;
+import com.dd01xc.service.model.ChartDataDTO;
 import com.dd01xc.service.model.ChartDataDTO.LatencyData;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;

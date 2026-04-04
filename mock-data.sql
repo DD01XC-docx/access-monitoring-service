@@ -1,6 +1,3 @@
---insert data into data-base system tables for testing purposes.
-
---users-data-exmpl
 INSERT INTO users (created_at, email, enabled, password, role, status, username, last_ip, last_login) VALUES
 ('2026-03-15 10:20:00.0', 'alex.dev@gmail.com', true, '$2a$10$ExR8zS4.IpxV5/8O8L9RPe8vFsh6vBqL3m6.1D.n0H5n5u5u5u5u.', 'ADMIN', 'ACTIVE', 'AlexDev', '192.168.1.10', '2026-04-04 09:15:00'),
 ('2026-03-18 14:45:12.1', 'marta_security@outlook.com', true, '$2a$10$ExR8zS4.IpxV5/8O8L9RPe8vFsh6vBqL3m6.1D.n0H5n5u5u5u5u.', 'USER', 'ACTIVE', 'MartaSec', '85.24.120.44', '2026-04-04 10:45:00'),

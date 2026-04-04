@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 //sql data-repo
 @Repository
 public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
-
     List<AccessEvent> findTop10ByOrderByCreatedAtDesc();
 
     //exists-logic

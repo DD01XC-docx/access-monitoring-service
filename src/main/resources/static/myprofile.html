@@ -29,7 +29,7 @@
     <div class="profile-header-card">
         <div class="profile-avatar">E</div>
         <div class="profile-header-info">
-            <h2>Eivind</h2>
+            <h2 id="profileUsernameH">Eivind</h2>
             <p>Full-stack Developer</p>
             <span class="profile-status">Monitoring access events</span>
         </div>
@@ -41,19 +41,19 @@
             <h3>Account Info</h3>
             <div class="profile-row">
                 <span>Full name</span>
-                <strong>Eivind Hansen</strong>
+                <strong id="profileUsername"></strong>
             </div>
             <div class="profile-row">
                 <span>Email</span>
-                <strong>heivind23@example.com</strong>
+                <strong id="profileEmail"></strong>
             </div>
             <div class="profile-row">
                 <span>Role</span>
-                <strong>User</strong>
+                <strong id="profileRole"></strong>
             </div>
             <div class="profile-row">
                 <span>Timezone</span>
-                <strong>Europe/Oslo</strong>
+                <strong id="profileTimezone">Europe/Oslo</strong>
             </div>
         </article>
 
@@ -89,11 +89,11 @@
             <h3>Security</h3>
             <div class="profile-row">
                 <span>Last login</span>
-                <strong>03 Apr 2026, 09:42</strong>
+                <strong id="profileLastLogin"></strong>
             </div>
             <div class="profile-row">
                 <span>Last IP</span>
-                <strong>192.168.1.24</strong>
+                <strong id="profileLastIp"></strong>
             </div>
             <div class="profile-row">
                 <span>Password updated</span>
@@ -103,14 +103,14 @@
                 <span>2FA</span>
                 <strong>Disabled</strong>
             </div>
-            <button class="profile-secondary-btn" type="button">Log out all sessions</button>
+            <button class="profile-secondary-btn" id="logoutBtnAllS" type="button">Log out all sessions</button>
         </article>
 
         <article class="profile-card profile-card-wide">
             <h3>Recent Activity</h3>
             <div class="activity-item">
                 <span>Successful login</span>
-                <strong>Today, 09:42</strong>
+                <strong id="profileSuccessfulLogin"></strong>
             </div>
             <div class="activity-item">
                 <span>Changed dashboard range to 24h</span>
@@ -123,6 +123,6 @@
         </article>
     </div>
 </section>
-
+    <script src="/frontend/scripts/myprofile.js"></script>
 </body>
 </html>
