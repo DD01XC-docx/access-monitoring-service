@@ -158,8 +158,8 @@ The main goal is to demonstrate practical full-stack development with a focus on
 - [x] Add dashboard analytics
 - [x] Add recent access logs feed
 - [x] Add quick actions dashboard card
+- [x] Improve validation and error handling
 - [ ] Build profile/settings page
-- [ ] Improve validation and error handling
 - [ ] Expand automated testing
 - [ ] Refine authorization rules
 - [ ] Continue dashboard UX improvements
