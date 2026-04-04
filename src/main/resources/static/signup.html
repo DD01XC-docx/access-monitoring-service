@@ -62,13 +62,13 @@
     <div>
         <form id="registerForm" class="auth-form">
             <div class="input-group">
-            <input id="username" type="text" placeholder="Username" required>
+            <input id="username" type="text" minlength="3" maxlength="30" placeholder="Username" required>
             </div>
             <div class="input-group">
             <input id="email" type="email" placeholder="E-mail" required>
             </div>
             <div class="input-group">
-            <input id="password" type="password" placeholder="Password" required>
+            <input id="password" type="password" minlength="8" placeholder="Password" required>
             </div>
             
             <div class="checkbox-group">
