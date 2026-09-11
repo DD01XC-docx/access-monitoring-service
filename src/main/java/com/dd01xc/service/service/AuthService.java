@@ -14,6 +14,8 @@ import com.dd01xc.service.model.RegisterResponse;
 import com.dd01xc.service.model.User;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
+import com.dd01xc.service.service.exception.AccountDisabledException;
+import com.dd01xc.service.service.exception.DuplicateAccountException;
 import com.dd01xc.service.service.exception.InvalidCredentialsException;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +26,10 @@ public class AuthService {
     private static final String ACCESS_STATUS_SUCCESS = "SUCCESS";
     private static final String ACCESS_STATUS_FAILED = "FAILED";
     private static final String USER_ROLE = "USER";
-    private static final String USER_STATUS_ACTIVE = "ACTIVE";
+    private static final String USER_STATUS_ACTIVE = User.STATUS_ACTIVE;
     private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid credentials";
+    private static final String ACCOUNT_DISABLED_MESSAGE = "Account is not active";
+    private static final String DUPLICATE_ACCOUNT_MESSAGE = "Account already exists";
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final AccessRepository accessRepository;
@@ -40,7 +44,7 @@ public class AuthService {
     
     //log
     
-    @Transactional(noRollbackFor = InvalidCredentialsException.class)
+    @Transactional(noRollbackFor = {InvalidCredentialsException.class, AccountDisabledException.class})
     public LoginResponse login(LoginRequest loginRequest, String clientIp) {
 
         long startTime = System.nanoTime();
@@ -54,6 +58,11 @@ public class AuthService {
         }
 
         User user = userOptional.get();
+        if (!user.isActive()) {
+            saveAccessEvent(accessEvent, ACCESS_STATUS_FAILED, startTime);
+            throw new AccountDisabledException(ACCOUNT_DISABLED_MESSAGE);
+        }
+
         String token = jwtService.generateToken(user.getUsername(), user.getRole());
         user.setLastLogin(LocalDateTime.now());
         user.setLastIp(clientIp);
@@ -65,22 +74,15 @@ public class AuthService {
 
     //reg
 
-    @Transactional(noRollbackFor = InvalidCredentialsException.class)
+    @Transactional(noRollbackFor = DuplicateAccountException.class)
     public RegisterResponse register(RegisterRequest registerRequest, String clientIp) {
         long startTime = System.nanoTime();
         AccessEvent accessEvent = createAccessEvent(registerRequest.getEmail(), clientIp);
 
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            accessEvent.setStatus(ACCESS_STATUS_FAILED);
-            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-            accessRepository.save(accessEvent);
-            throw new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
-        }
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            accessEvent.setStatus(ACCESS_STATUS_FAILED);
-            accessEvent.setDurationMs((System.nanoTime() - startTime) / 1_000_000);
-            accessRepository.save(accessEvent);
-            throw new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
+        if (userRepository.existsByEmail(registerRequest.getEmail())
+                || userRepository.existsByUsername(registerRequest.getUsername())) {
+            saveAccessEvent(accessEvent, ACCESS_STATUS_FAILED, startTime);
+            throw new DuplicateAccountException(DUPLICATE_ACCOUNT_MESSAGE);
         }
 
         User user = new User();
@@ -95,7 +97,7 @@ public class AuthService {
         userRepository.save(user);
         
         saveAccessEvent(accessEvent, ACCESS_STATUS_SUCCESS, startTime);
-        return new RegisterResponse(user.getEmail(), user.getRole());
+        return new RegisterResponse(user.getUsername(), user.getRole());
     }
 
     //extra-help-func
