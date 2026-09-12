@@ -14,6 +14,9 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User {
 
+    //const
+    public static final String STATUS_ACTIVE = "ACTIVE";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +27,7 @@ public class User {
     @Column(nullable = false)
     private String password; 
 
-    @Column(unique = true, nullable = false, length=30)
+    @Column(unique = true, nullable = false, length=254)
     private String email;
 
     @Column(nullable = false, length=20)
@@ -119,6 +122,10 @@ public class User {
 
     public void setLastIp(String lastIp) {
         this.lastIp = lastIp;
+    }
+
+    public boolean isActive() {
+        return enabled && STATUS_ACTIVE.equals(status);
     }
 
     @PrePersist

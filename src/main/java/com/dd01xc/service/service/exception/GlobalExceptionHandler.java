@@ -19,6 +19,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
     
+    //AccountDisabledException
+    @ExceptionHandler(AccountDisabledException.class)
+    public ResponseEntity<String> handleAccountDisabled(AccountDisabledException ex) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    //DuplicateAccountException
+    @ExceptionHandler(DuplicateAccountException.class)
+    public ResponseEntity<String> handleDuplicateAccount(DuplicateAccountException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     //MethodArgumentNotValidException
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {

@@ -2,6 +2,9 @@ package com.dd01xc.service.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -14,8 +17,21 @@ import javax.crypto.SecretKey;
 @Service
 public class JwtService {
     
-    private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
-    private final long jwtExpiration = 86400000;
+    //const
+    private static final int MIN_SECRET_BYTES = 32;
+
+    private final SecretKey secretKey;
+    private final long jwtExpiration;
+
+    public JwtService(@Value("${jwt.secret}") String secret,
+                      @Value("${jwt.expiration-ms}") long jwtExpiration) {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        if (keyBytes.length < MIN_SECRET_BYTES) {
+            throw new IllegalStateException("jwt.secret must decode to at least " + MIN_SECRET_BYTES + " bytes");
+        }
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+        this.jwtExpiration = jwtExpiration;
+    }
     
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
