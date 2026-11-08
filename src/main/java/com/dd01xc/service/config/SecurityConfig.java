@@ -1,6 +1,6 @@
 package com.dd01xc.service.config;
 
-import com.dd01xc.service.service.JwtService;
+import com.dd01xc.service.controller.SpaController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,14 +42,12 @@ public class SecurityConfig {
             //missing or bad token is 401, not 403
             .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/login.html", "/signup.html", "/forgotPassword.html", "/documentation.html", "/free-trial.html", "/self-hosted.html", "/cti.html", "/contact.html", "/cloud.html", "/myprofile.html").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/frontend/**", "/webjars/**").permitAll()
-                .requestMatchers("/favicon.ico", "/error").permitAll()
+                //SPA shell and assets are public; data is protected at /api
+                .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg", "/error").permitAll()
+                .requestMatchers(SpaController.SPA_ROUTES).permitAll()
+                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/dashboard.html").permitAll()
-                .requestMatchers("/dashboard").authenticated()
                 .requestMatchers("/api/**").authenticated()
-                .requestMatchers("/api/profile/**").authenticated()
                 .anyRequest().authenticated()
             ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
