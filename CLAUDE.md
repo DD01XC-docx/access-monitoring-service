@@ -20,6 +20,7 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Comments: English only, minimal.
 - Branch per topic, conventional commits.
 - Skip `target/`, `.DS_Store`, `static/frontend/images/` when searching.
+- README shell blocks: comments on their own line, never trailing (zsh has no interactive `#` comments; args leak into the command).
 - Subagents (`security-reviewer`, `test-writer`) cost ~40k tokens each: use for sizable work only.
 
 ## Decisions (do not revisit)
