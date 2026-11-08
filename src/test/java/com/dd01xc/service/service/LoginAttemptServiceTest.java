@@ -53,12 +53,12 @@ class LoginAttemptServiceTest {
     }
 
     private void givenNoSuccess() {
-        when(accessRepository.findTopByUsernameOrEmailAndStatusOrderByCreatedAtDesc(EMAIL, AccessEvent.STATUS_SUCCESS))
+        when(accessRepository.findLastEventTime(EMAIL, AccessEvent.STATUS_SUCCESS))
                 .thenReturn(Optional.empty());
     }
 
     private void givenFailuresSince(LocalDateTime since, List<AccessEvent> failures) {
-        when(accessRepository.findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(
+        when(accessRepository.findEventsAfter(
                 EMAIL, AccessEvent.STATUS_FAILED, since)).thenReturn(failures);
     }
 
@@ -89,25 +89,25 @@ class LoginAttemptServiceTest {
 
     @Test
     void remainingLock_recentSuccess_countsOnlyFailuresAfterIt() {
-        when(accessRepository.findTopByUsernameOrEmailAndStatusOrderByCreatedAtDesc(EMAIL, AccessEvent.STATUS_SUCCESS))
-                .thenReturn(Optional.of(eventMinutesAgo(2)));
+        when(accessRepository.findLastEventTime(EMAIL, AccessEvent.STATUS_SUCCESS))
+                .thenReturn(Optional.of(NOW.minusMinutes(2)));
         givenFailuresSince(NOW.minusMinutes(2), failuresMinutesAgo(1));
 
         assertThat(service.remainingLock(EMAIL)).isEmpty();
-        verify(accessRepository).findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(
+        verify(accessRepository).findEventsAfter(
                 EMAIL, AccessEvent.STATUS_FAILED, NOW.minusMinutes(2));
     }
 
     @Test
     void remainingLock_successOlderThanWindow_usesWindowStart() {
-        when(accessRepository.findTopByUsernameOrEmailAndStatusOrderByCreatedAtDesc(EMAIL, AccessEvent.STATUS_SUCCESS))
-                .thenReturn(Optional.of(eventMinutesAgo(30)));
-        when(accessRepository.findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(
+        when(accessRepository.findLastEventTime(EMAIL, AccessEvent.STATUS_SUCCESS))
+                .thenReturn(Optional.of(NOW.minusMinutes(30)));
+        when(accessRepository.findEventsAfter(
                 any(), any(), any())).thenReturn(List.of());
 
         service.remainingLock(EMAIL);
 
-        verify(accessRepository).findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(
+        verify(accessRepository).findEventsAfter(
                 EMAIL, AccessEvent.STATUS_FAILED, NOW.minus(WINDOW));
     }
 }

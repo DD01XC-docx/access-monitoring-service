@@ -42,15 +42,12 @@ public class LoginAttemptService {
         LocalDateTime since = now.minus(window);
 
         //failures before the last successful login do not count
-        Optional<LocalDateTime> lastSuccess = accessRepository
-                .findTopByUsernameOrEmailAndStatusOrderByCreatedAtDesc(email, AccessEvent.STATUS_SUCCESS)
-                .map(AccessEvent::getCreatedAt);
+        Optional<LocalDateTime> lastSuccess = accessRepository.findLastEventTime(email, AccessEvent.STATUS_SUCCESS);
         if (lastSuccess.isPresent() && lastSuccess.get().isAfter(since)) {
             since = lastSuccess.get();
         }
 
-        List<AccessEvent> failures = accessRepository
-                .findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(email, AccessEvent.STATUS_FAILED, since);
+        List<AccessEvent> failures = accessRepository.findEventsAfter(email, AccessEvent.STATUS_FAILED, since);
         if (failures.size() < maxAttempts) {
             return Optional.empty();
         }

@@ -19,10 +19,14 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
     @Query(value = "SELECT 1 FROM (SELECT pg_advisory_xact_lock(hashtext(:account))) AS l", nativeQuery = true)
     Integer lockAccount(@Param("account") String account);
 
-    Optional<AccessEvent> findTopByUsernameOrEmailAndStatusOrderByCreatedAtDesc(String usernameOrEmail, String status);
+    //explicit JPQL: derived names would parse "UsernameOrEmail" as "username OR email"
+    @Query("SELECT MAX(a.createdAt) FROM AccessEvent a WHERE a.usernameOrEmail = :account AND a.status = :status")
+    Optional<LocalDateTime> findLastEventTime(@Param("account") String account, @Param("status") String status);
 
-    List<AccessEvent> findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(
-            String usernameOrEmail, String status, LocalDateTime after);
+    @Query("SELECT a FROM AccessEvent a WHERE a.usernameOrEmail = :account AND a.status = :status"
+            + " AND a.createdAt > :after ORDER BY a.createdAt DESC")
+    List<AccessEvent> findEventsAfter(@Param("account") String account, @Param("status") String status,
+            @Param("after") LocalDateTime after);
 
     //exists-logic
     long countByStatus(String status);
