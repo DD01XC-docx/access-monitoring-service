@@ -26,9 +26,11 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Login is email-only; `findByUsername` stays for JWT filter and profile.
 - Inactive account returns same 401 as bad password (no enumeration).
 - Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`. Duplicate signups log `REGISTER_FAILED` (must not count toward lockout). Login takes `pg_advisory_xact_lock(hashtext(email))` first (Postgres-only; H2 can't run it).
-- Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
+- Endpoint typo `/api/access/stat/responce-time` kept: frontend `lib/api.ts` uses it.
+- UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- React migration (branch `feat/react-frontend`): done scaffold, auth, login/signup, profile. Done: Maven build into jar, `SpaController` forwards SPA routes (add new routes there AND in `SPA_ROUTES`), Docker. Dashboard done (`features/dashboard/`, lazy-loaded, 30s polling). Landing done (`pages/LandingPage` + `features/landing/DashboardPreview`, plain SVG so recharts stays out of main bundle; no fake logos/testimonials, numbers mirror real config). Migration complete.
-- Rate limit per IP on `/api/auth/**`, retention/purge for `access_events`, Flyway, ADMIN role, prod profile, CI, Testcontainers.
+- State 2026-11-08: React migration complete on `feat/react-frontend` (branched from `fix/auth-hardening`, neither merged to `main`). README rewritten. Merge order: `fix/auth-hardening` -> main, then `feat/react-frontend`.
+- New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
+- Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, Testcontainers, Flyway, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off), CI. Optional: README screenshot `docs/dashboard.png`.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).
