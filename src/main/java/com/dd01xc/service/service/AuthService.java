@@ -14,10 +14,11 @@ import com.dd01xc.service.model.RegisterResponse;
 import com.dd01xc.service.model.User;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
-import com.dd01xc.service.service.exception.AccountDisabledException;
 import com.dd01xc.service.service.exception.DuplicateAccountException;
 import com.dd01xc.service.service.exception.InvalidCredentialsException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
@@ -28,8 +29,10 @@ public class AuthService {
     private static final String USER_ROLE = "USER";
     private static final String USER_STATUS_ACTIVE = User.STATUS_ACTIVE;
     private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid credentials";
-    private static final String ACCOUNT_DISABLED_MESSAGE = "Account is not active";
     private static final String DUPLICATE_ACCOUNT_MESSAGE = "Account already exists";
+    //bcrypt cost 10, equalizes login timing for unknown users
+    private static final String DUMMY_PASSWORD_HASH = "$2a$10$20stZrpXygUjw0w3jLHhD.yGIdDATOTdpZVykwnflleruFGoBFkS2";
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final AccessRepository accessRepository;
@@ -44,7 +47,7 @@ public class AuthService {
     
     //log
     
-    @Transactional(noRollbackFor = {InvalidCredentialsException.class, AccountDisabledException.class})
+    @Transactional(noRollbackFor = InvalidCredentialsException.class)
     public LoginResponse login(LoginRequest loginRequest, String clientIp) {
 
         long startTime = System.nanoTime();
@@ -58,9 +61,11 @@ public class AuthService {
         }
 
         User user = userOptional.get();
+        //same 401 as bad password, reason only in server log
         if (!user.isActive()) {
+            log.warn("Login rejected for inactive account: {}", user.getUsername());
             saveAccessEvent(accessEvent, ACCESS_STATUS_FAILED, startTime);
-            throw new AccountDisabledException(ACCOUNT_DISABLED_MESSAGE);
+            throw new InvalidCredentialsException(INVALID_CREDENTIALS_MESSAGE);
         }
 
         String token = jwtService.generateToken(user.getUsername(), user.getRole());
@@ -125,7 +130,10 @@ public class AuthService {
     }
 
     private boolean isValidCredentials(Optional<User> userOptional, String rawPassword) {
-        return userOptional.isPresent() && passwordEncoder.matches(rawPassword, userOptional.get().getPassword());
+        //always run bcrypt so unknown users take as long as known ones
+        String hash = userOptional.map(User::getPassword).orElse(DUMMY_PASSWORD_HASH);
+        boolean matches = passwordEncoder.matches(rawPassword, hash);
+        return userOptional.isPresent() && matches;
     }
 
     public static class ForgotPasswordRequest {
