@@ -60,6 +60,9 @@ public class AuthService {
         long startTime = System.nanoTime();
         AccessEvent accessEvent = createAccessEvent(loginRequest.getEmail(), clientIp);
 
+        //held until commit: parallel logins for one email run one by one
+        accessRepository.lockAccount(loginRequest.getEmail());
+
         //LOCKED is not counted as FAILED, so attempts during lock do not extend it
         Optional<Duration> lock = loginAttemptService.remainingLock(loginRequest.getEmail());
         if (lock.isPresent()) {
@@ -100,7 +103,7 @@ public class AuthService {
 
         if (userRepository.existsByEmail(registerRequest.getEmail())
                 || userRepository.existsByUsername(registerRequest.getUsername())) {
-            saveAccessEvent(accessEvent, ACCESS_STATUS_FAILED, startTime);
+            saveAccessEvent(accessEvent, AccessEvent.STATUS_REGISTER_FAILED, startTime);
             throw new DuplicateAccountException(DUPLICATE_ACCOUNT_MESSAGE);
         }
 

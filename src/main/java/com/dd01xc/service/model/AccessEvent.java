@@ -20,6 +20,8 @@ public class AccessEvent {
     public static final String STATUS_SUCCESS = "SUCCESS";
     public static final String STATUS_FAILED = "FAILED";
     public static final String STATUS_LOCKED = "LOCKED";
+    //separate from FAILED so duplicate signups cannot trigger login lockout
+    public static final String STATUS_REGISTER_FAILED = "REGISTER_FAILED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

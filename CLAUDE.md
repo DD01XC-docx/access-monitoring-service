@@ -24,9 +24,9 @@ README.md covers API, config, structure, limitations — read only when needed, 
 ## Decisions (do not revisit)
 - Login is email-only; `findByUsername` stays for JWT filter and profile.
 - Inactive account returns same 401 as bad password (no enumeration).
-- Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`.
+- Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`. Duplicate signups log `REGISTER_FAILED` (must not count toward lockout). Login takes `pg_advisory_xact_lock(hashtext(email))` first (Postgres-only; H2 can't run it).
 - Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
 
 ## Next
-- Rate limit per IP on `/api/auth/**`, Flyway, ADMIN role, prod profile, CI, Testcontainers.
+- Rate limit per IP on `/api/auth/**`, retention/purge for `access_events`, Flyway, ADMIN role, prod profile, CI, Testcontainers.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).

@@ -135,6 +135,18 @@ public class AuthServiceTest {
     }
 
     @Test
+    void login_any_takesAccountLockBeforeLockoutCheck() {
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.login(loginRequest(EMAIL, RAW_PASSWORD), IP))
+                .isInstanceOf(InvalidCredentialsException.class);
+
+        org.mockito.InOrder order = org.mockito.Mockito.inOrder(accessRepository, loginAttemptService);
+        order.verify(accessRepository).lockAccount(EMAIL);
+        order.verify(loginAttemptService).remainingLock(EMAIL);
+    }
+
+    @Test
     void login_usernameAsIdentifier_throwsInvalidCredentialsWithoutUsernameLookup() {
         when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
 
@@ -252,7 +264,7 @@ public class AuthServiceTest {
                 .isInstanceOf(DuplicateAccountException.class)
                 .hasMessage("Account already exists");
 
-        assertThat(capturedEvent().getStatus()).isEqualTo("FAILED");
+        assertThat(capturedEvent().getStatus()).isEqualTo("REGISTER_FAILED");
         verify(userRepository, never()).save(any());
         verifyNoInteractions(passwordEncoder);
     }
@@ -266,7 +278,7 @@ public class AuthServiceTest {
                 .isInstanceOf(DuplicateAccountException.class)
                 .hasMessage("Account already exists");
 
-        assertThat(capturedEvent().getStatus()).isEqualTo("FAILED");
+        assertThat(capturedEvent().getStatus()).isEqualTo("REGISTER_FAILED");
         verify(userRepository, never()).save(any());
         verifyNoInteractions(passwordEncoder);
     }
