@@ -1,32 +1,30 @@
 # CLAUDE.md
 
 Spring Boot 3.4 / Java 21 / Maven. JWT auth + access-event analytics, static frontend in `src/main/resources/static/`.
-README.md already covers API, config, structure, limitations — read it only when needed, do not duplicate here.
+README.md covers API, config, structure, limitations — read only when needed, do not duplicate here.
 
 ## Commands
-- Run DB: `docker compose up -d` (Postgres 16 on `127.0.0.1:5444`, db `security_db`, postgres/root)
-- Run app: `JWT_SECRET=... ./mvnw spring-boot:run` (`JWT_SECRET` required, no default)
-- Tests: `./mvnw test` (H2 in test scope)
-- Single test: `./mvnw test -Dtest=AuthServiceTest`
+- Tests: `.claude/scripts/test.sh [-Dtest=Class]` (forces JDK 21, compact output). Never plain `./mvnw test`: default JDK is 25 and Mockito breaks on it.
+- Run DB: `docker compose up -d` (Postgres 16, `127.0.0.1:5444`, db `security_db`, postgres/root)
+- Run app: `JWT_SECRET=... ./mvnw spring-boot:run` (`JWT_SECRET` required)
 
-## Code map (main package `com.dd01xc.service`)
-- Auth flow: `controller/AuthController` -> `service/AuthService` -> `service/JwtService`; filter `config/JwtAuthenticationFilter`, rules `config/SecurityConfig`
-- Errors: domain exceptions in `service/exception/`, mapped in `GlobalExceptionHandler` (401 bad creds, 403 inactive, 409 duplicate)
-- Analytics: `controller/AccessController` -> `service/AccessStatService` -> `repository/AccessRepository` (native queries)
-- Seed data: `init/DataInitializer`, `mock-data.sql`, `test-data.sql`
+## Code map (`com.dd01xc.service`)
+- Auth: `controller/AuthController` -> `service/AuthService` -> `service/JwtService`; `config/JwtAuthenticationFilter`, `config/SecurityConfig`
+- Errors: `service/exception/` + `GlobalExceptionHandler` (401 bad creds or inactive, 409 duplicate, 400 validation)
+- Analytics: `controller/AccessController` -> `service/AccessStatService` -> `repository/AccessRepository` (native SQL)
+- Seed: `init/DataInitializer`, `mock-data.sql`, `test-data.sql`
 
-## Working rules
-- Learning project: explain each fix before editing.
+## Rules
+- Learning project: explain each change before editing.
 - Comments: English only, minimal.
-- Branch per topic (`fix/...`), conventional commits (`fix(security): ...`, `docs: ...`).
-- Ignore `target/`, `.DS_Store`, `static/frontend/images/` when searching.
+- Branch per topic, conventional commits.
+- Skip `target/`, `.DS_Store`, `static/frontend/images/` when searching.
+- Subagents (`security-reviewer`, `test-writer`) cost ~40k tokens each: use for sizable work only.
 
-## Subagents (`.claude/agents/`, model sonnet)
-- `security-reviewer` — read-only audit of diff vs main or a named area
-- `test-writer` — writes JUnit5/Mockito/MockMvc tests and runs them, never touches main code
+## Decisions (do not revisit)
+- Login is email-only; `findByUsername` stays for JWT filter and profile.
+- Inactive account returns same 401 as bad password (no enumeration).
+- Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
 
-## Session notes (append only what saves time next session; drop stale lines)
-- JDK 21 + 25 installed; Mockito breaks on 25. Use `JAVA_HOME=$(/usr/libexec/java_home -v 21) ./mvnw test` unless JAVA_HOME already points to 21.
-- 2026-11-08: login hardened (dummy BCrypt hash `$2a$10$...` in AuthService, inactive account -> 401, password max 72). `AccountDisabledException` removed. Login is email-only (user decision, email is essential). Username must match `^[A-Za-z0-9_.-]+$`, password <= 72 bytes via `@AssertTrue`. 18 tests green.
-- New agents in `.claude/agents/` need a Claude Code restart to be callable by name.
-- Endpoint typo kept as-is: `/api/access/stat/responce-time` (frontend depends on it).
+## Next
+- Controller/security tests (`@WebMvcTest`), then lockout after N failed logins, rate limit, Flyway, ADMIN role, prod profile, CI, Testcontainers.

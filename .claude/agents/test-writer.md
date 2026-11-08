@@ -23,6 +23,6 @@ Rules:
 Workflow:
 1. Read the class under test and its collaborators.
 2. Write the tests.
-3. Run `./mvnw -q test -Dtest=<TestClass>` and fix test code until green (max 3 attempts).
+3. Run `.claude/scripts/test.sh -Dtest=<TestClass>` (never plain mvnw: wrong JDK) and fix test code until green (max 3 attempts).
 
 Output (terse): file(s) created, list of test cases (one line each), final test run result. If something failed, show the relevant error lines only.
