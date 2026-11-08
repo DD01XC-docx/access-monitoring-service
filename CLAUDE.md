@@ -27,4 +27,5 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
 
 ## Next
-- Controller/security tests (`@WebMvcTest`), then lockout after N failed logins, rate limit, Flyway, ADMIN role, prod profile, CI, Testcontainers.
+- Lockout after N failed logins, rate limit, Flyway, ADMIN role, prod profile, CI, Testcontainers.
+- Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).
