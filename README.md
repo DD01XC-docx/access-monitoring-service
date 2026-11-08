@@ -78,7 +78,7 @@ All endpoints except `/api/auth/**` require the header `Authorization: Bearer <t
 | POST   | `/api/auth/login`    | Authenticate and receive a JWT      |
 | POST   | `/api/auth/check`    | Verify that a token is valid        |
 
-Validation rules: username 3–20 characters, valid email, password 8–72 characters.
+Validation rules: username 3–20 characters (letters, digits, `_`, `.`, `-`), valid email, password at least 8 characters and at most 72 bytes.
 
 ### Profile
 
