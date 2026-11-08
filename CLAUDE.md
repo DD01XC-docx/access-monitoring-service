@@ -27,6 +27,7 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Login is email-only; `findByUsername` stays for JWT filter and profile.
 - Inactive account returns same 401 as bad password (no enumeration).
 - Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`. Duplicate signups log `REGISTER_FAILED` (must not count toward lockout). Login takes `pg_advisory_xact_lock(hashtext(email))` first (Postgres-only; H2 can't run it).
+- Analytics responses mask accounts and IPs (`util/Masking`, `AccessEventDTO`); DB keeps raw values. Never return entities from `/api/access/**`.
 - Endpoint typo `/api/access/stat/responce-time` kept: frontend `lib/api.ts` uses it.
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
