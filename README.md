@@ -78,7 +78,7 @@ All endpoints except `/api/auth/**` require the header `Authorization: Bearer <t
 | POST   | `/api/auth/login`    | Authenticate and receive a JWT      |
 | POST   | `/api/auth/check`    | Verify that a token is valid        |
 
-Validation rules: username 3–20 characters, valid email, password at least 8 characters.
+Validation rules: username 3–20 characters, valid email, password 8–72 characters.
 
 ### Profile
 
@@ -104,8 +104,8 @@ Validation rules: username 3–20 characters, valid email, password at least 8 c
 | Status | Cause                                        |
 |--------|----------------------------------------------|
 | 400    | Request validation failed (field → message)  |
-| 401    | Invalid credentials, missing or invalid token |
-| 403    | Account is not active                        |
+| 401    | Invalid credentials, inactive account, missing or invalid token |
+| 403    | Authenticated but access denied              |
 | 409    | Username or email already registered         |
 
 ## Project Structure
@@ -126,7 +126,8 @@ src/main/resources/
 
 ## Known Limitations
 
-- No automated tests yet.
+- Test coverage is limited to `AuthService` unit tests.
+- No rate limiting on `/api/auth/**`; registration reveals whether an email or username is taken.
 - CORS is open to all origins.
 - `X-Forwarded-For` is trusted without a proxy allow-list.
 - Schema is managed by `ddl-auto=update`; no migrations.
