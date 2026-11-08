@@ -124,6 +124,12 @@
   body {
     @apply bg-background text-foreground;
     }
+  /* smooth anchor jumps on the landing page, off for reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
   html {
     @apply font-sans;
     }
