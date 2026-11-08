@@ -3,14 +3,30 @@ package com.dd01xc.service.repository;
 import com.dd01xc.service.model.AccessEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 //sql data-repo
 @Repository
 public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
     List<AccessEvent> findTop10ByOrderByCreatedAtDesc();
+
+    //lockout
+    //serializes logins per account until commit, so parallel requests see each other's FAILED rows
+    @Query(value = "SELECT 1 FROM (SELECT pg_advisory_xact_lock(hashtext(:account))) AS l", nativeQuery = true)
+    Integer lockAccount(@Param("account") String account);
+
+    //explicit JPQL: derived names would parse "UsernameOrEmail" as "username OR email"
+    @Query("SELECT MAX(a.createdAt) FROM AccessEvent a WHERE a.usernameOrEmail = :account AND a.status = :status")
+    Optional<LocalDateTime> findLastEventTime(@Param("account") String account, @Param("status") String status);
+
+    @Query("SELECT a FROM AccessEvent a WHERE a.usernameOrEmail = :account AND a.status = :status"
+            + " AND a.createdAt > :after ORDER BY a.createdAt DESC")
+    List<AccessEvent> findEventsAfter(@Param("account") String account, @Param("status") String status,
+            @Param("after") LocalDateTime after);
 
     //exists-logic
     long countByStatus(String status);

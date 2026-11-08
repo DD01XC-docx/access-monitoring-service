@@ -1,5 +1,8 @@
 package com.dd01xc.service.model;
 
+import java.nio.charset.StandardCharsets;
+
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -10,11 +13,18 @@ public class LoginRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Please provide a valid email")
+    @Size(max = 254, message = "Email must be at most 254 characters")
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 72, message = "Password must be 8-72 characters long")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
+
+    //bcrypt ignores bytes past 72
+    @AssertTrue(message = "Password must be at most 72 bytes")
+    public boolean isPasswordWithinBcryptLimit() {
+        return password == null || password.getBytes(StandardCharsets.UTF_8).length <= 72;
+    }
     
     //get-set
     public String getEmail() { return email; }

@@ -7,12 +7,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "access_events")
+//index for lockout lookups by account and time
+@Table(name = "access_events", indexes = @Index(name = "idx_access_events_account_time", columnList = "usernameOrEmail, createdAt"))
 public class AccessEvent {
+
+    //const
+    public static final String STATUS_SUCCESS = "SUCCESS";
+    public static final String STATUS_FAILED = "FAILED";
+    public static final String STATUS_LOCKED = "LOCKED";
+    //separate from FAILED so duplicate signups cannot trigger login lockout
+    public static final String STATUS_REGISTER_FAILED = "REGISTER_FAILED";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

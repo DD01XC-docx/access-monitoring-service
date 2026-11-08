@@ -50,6 +50,8 @@ public class AuthServiceTest {
     private AccessRepository accessRepository;
     @Mock
     private JwtService jwtService;
+    @Mock
+    private LoginAttemptService loginAttemptService;
 
     @InjectMocks
     private AuthService authService;
@@ -122,25 +124,34 @@ public class AuthServiceTest {
     }
 
     @Test
-    void login_identifierMatchesUsername_fallsBackToUsernameLookup() {
-        when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
-        when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(activeUser));
-        when(passwordEncoder.matches(RAW_PASSWORD, HASH)).thenReturn(true);
-        when(jwtService.generateToken(USERNAME, "USER")).thenReturn("jwt-token");
+    void login_accountLocked_throwsLockedSavesLockedEventSkipsPasswordCheck() {
+        when(loginAttemptService.remainingLock(EMAIL)).thenReturn(Optional.of(java.time.Duration.ofMinutes(3)));
 
-        LoginResponse response = authService.login(loginRequest(USERNAME, RAW_PASSWORD), IP);
+        assertThatThrownBy(() -> authService.login(loginRequest(EMAIL, RAW_PASSWORD), IP))
+                .isInstanceOf(com.dd01xc.service.service.exception.AccountLockedException.class);
 
-        assertThat(response.token()).isEqualTo("jwt-token");
-        verify(userRepository).findByUsername(USERNAME);
+        assertThat(capturedEvent().getStatus()).isEqualTo("LOCKED");
+        verifyNoInteractions(passwordEncoder, userRepository, jwtService);
     }
 
     @Test
-    void login_foundByEmail_doesNotQueryByUsername() {
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(activeUser));
-        when(passwordEncoder.matches(RAW_PASSWORD, HASH)).thenReturn(true);
-        when(jwtService.generateToken(USERNAME, "USER")).thenReturn("jwt-token");
+    void login_any_takesAccountLockBeforeLockoutCheck() {
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        authService.login(loginRequest(EMAIL, RAW_PASSWORD), IP);
+        assertThatThrownBy(() -> authService.login(loginRequest(EMAIL, RAW_PASSWORD), IP))
+                .isInstanceOf(InvalidCredentialsException.class);
+
+        org.mockito.InOrder order = org.mockito.Mockito.inOrder(accessRepository, loginAttemptService);
+        order.verify(accessRepository).lockAccount(EMAIL);
+        order.verify(loginAttemptService).remainingLock(EMAIL);
+    }
+
+    @Test
+    void login_usernameAsIdentifier_throwsInvalidCredentialsWithoutUsernameLookup() {
+        when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.login(loginRequest(USERNAME, RAW_PASSWORD), IP))
+                .isInstanceOf(InvalidCredentialsException.class);
 
         verify(userRepository, never()).findByUsername(any());
     }
@@ -148,7 +159,6 @@ public class AuthServiceTest {
     @Test
     void login_unknownUser_throwsInvalidCredentialsAndSavesFailedEvent() {
         when(userRepository.findByEmail("ghost@example.com")).thenReturn(Optional.empty());
-        when(userRepository.findByUsername("ghost@example.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.login(loginRequest("ghost@example.com", RAW_PASSWORD), IP))
                 .isInstanceOf(InvalidCredentialsException.class)
@@ -254,7 +264,7 @@ public class AuthServiceTest {
                 .isInstanceOf(DuplicateAccountException.class)
                 .hasMessage("Account already exists");
 
-        assertThat(capturedEvent().getStatus()).isEqualTo("FAILED");
+        assertThat(capturedEvent().getStatus()).isEqualTo("REGISTER_FAILED");
         verify(userRepository, never()).save(any());
         verifyNoInteractions(passwordEncoder);
     }
@@ -268,7 +278,7 @@ public class AuthServiceTest {
                 .isInstanceOf(DuplicateAccountException.class)
                 .hasMessage("Account already exists");
 
-        assertThat(capturedEvent().getStatus()).isEqualTo("FAILED");
+        assertThat(capturedEvent().getStatus()).isEqualTo("REGISTER_FAILED");
         verify(userRepository, never()).save(any());
         verifyNoInteractions(passwordEncoder);
     }

@@ -1,4 +1,5 @@
-version: '3.8'
+#full stack: docker compose up --build   (needs JWT_SECRET in .env)
+#database only, for local dev: docker compose up -d postgres
 
 services:
   postgres:
@@ -7,12 +8,31 @@ services:
     environment:
       POSTGRES_DB: security_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-root}
     ports:
       - "5444:5432"
     volumes:
       - security_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d security_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    container_name: amc_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      SPRING_JPA_SHOW_SQL: "false"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    restart: unless-stopped
 
 volumes:
   security_db_data:
-
