@@ -23,7 +23,8 @@ Self-hosted service that records every authentication attempt, locks brute-force
 Requires Docker with Docker Compose.
 
 ```bash
-printf 'JWT_SECRET=%s\n' "$(openssl rand -base64 32)" > .env   # one-time signing key
+# one-time: generate a signing key
+printf 'JWT_SECRET=%s\n' "$(openssl rand -base64 32)" > .env
 docker compose up --build
 ```
 
@@ -69,9 +70,12 @@ flowchart LR
 Requires JDK 21 and Docker. Node is optional, because Maven downloads its own.
 
 ```bash
-docker compose up -d postgres          # PostgreSQL on localhost:5444
-./mvnw spring-boot:run                 # API + built UI on http://localhost:8080
-npm --prefix frontend run dev          # UI with hot reload on http://localhost:5173, proxies /api
+# PostgreSQL on localhost:5444
+docker compose up -d postgres
+# API + built UI on http://localhost:8080 (needs .env from Quick Start)
+./mvnw spring-boot:run
+# optional: UI with hot reload on http://localhost:5173, proxies /api
+npm --prefix frontend run dev
 ```
 
 - `./mvnw package` builds the React app into the jar. Add `-Dskip.installnodenpm -Dskip.npm` to skip the frontend build.
@@ -124,7 +128,8 @@ Every endpoint except `/api/auth/**` requires `Authorization: Bearer <token>`.
 ## Testing
 
 ```bash
-./mvnw test -Dskip.installnodenpm -Dskip.npm   # skip the frontend build for speed
+# skip the frontend build for speed
+./mvnw test -Dskip.installnodenpm -Dskip.npm
 ```
 
 44 tests cover:

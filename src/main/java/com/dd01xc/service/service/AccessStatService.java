@@ -8,11 +8,12 @@ import java.util.Map;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import com.dd01xc.service.model.AccessEvent;
+import com.dd01xc.service.model.AccessEventDTO;
 import com.dd01xc.service.model.ChartDataDTO;
 import com.dd01xc.service.model.ChartDataDTO.LatencyData;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
+import com.dd01xc.service.util.Masking;
 
 @Service
 public class AccessStatService {
@@ -122,7 +123,7 @@ public class AccessStatService {
         }
 
         for (Object[] row : dbRows) {
-            String account = extractAccount(row);
+            String account = Masking.account(extractAccount(row));
             int failedCount = extractNumber(row, 1);
             categories.add(account);
             failedCounts.add(failedCount);
@@ -228,8 +229,10 @@ public class AccessStatService {
         return Map.of("series", List.of(seriesData));
     }
 
-    public List<AccessEvent> getRecentLogs() {
-        return accessRepository.findTop10ByOrderByCreatedAtDesc();
+    public List<AccessEventDTO> getRecentLogs() {
+        return accessRepository.findTop10ByOrderByCreatedAtDesc().stream()
+            .map(AccessEventDTO::from)
+            .toList();
     }
 
     //extra-help-functions

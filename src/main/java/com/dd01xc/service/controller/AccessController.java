@@ -1,6 +1,6 @@
 package com.dd01xc.service.controller;
 
-import com.dd01xc.service.model.AccessEvent;
+import com.dd01xc.service.model.AccessEventDTO;
 import com.dd01xc.service.model.ChartDataDTO;
 import com.dd01xc.service.service.AccessStatService;
 
@@ -65,7 +65,7 @@ public class AccessController {
     }
 
     @GetMapping("/logs/recent")
-    public List<AccessEvent> getRecentLogs() {
+    public List<AccessEventDTO> getRecentLogs() {
         return accessStatService.getRecentLogs();
     }
 }
