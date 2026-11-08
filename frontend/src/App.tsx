@@ -1,12 +1,15 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 
 import { AppShell } from '@/components/layout/AppShell'
 import { getSession } from '@/lib/session'
-import { DashboardPage } from '@/pages/DashboardPage'
 import { LandingPage } from '@/pages/LandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { SignupPage } from '@/pages/SignupPage'
+
+//charts are heavy: load the dashboard chunk only when needed
+const DashboardPage = lazy(() => import('@/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })))
 
 function RequireAuth() {
   const location = useLocation()
@@ -22,7 +25,14 @@ export default function App() {
       <Route path="/signup" element={<SignupPage />} />
       <Route element={<RequireAuth />}>
         <Route element={<AppShell />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Suspense fallback={null}>
+                <DashboardPage />
+              </Suspense>
+            }
+          />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Route>

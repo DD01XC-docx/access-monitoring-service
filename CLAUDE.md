@@ -29,6 +29,6 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
 
 ## Next
-- React migration (branch `feat/react-frontend`): done scaffold, auth, login/signup, profile. Done: Maven build into jar, `SpaController` forwards SPA routes (add new routes there AND in `SPA_ROUTES`), Docker. Todo: dashboard (Recharts, LOCKED/REGISTER_FAILED colors, lazy routes), full landing pages (placeholder `LandingPage` now).
+- React migration (branch `feat/react-frontend`): done scaffold, auth, login/signup, profile. Done: Maven build into jar, `SpaController` forwards SPA routes (add new routes there AND in `SPA_ROUTES`), Docker. Dashboard done (`features/dashboard/`, lazy-loaded, 30s polling). Todo: one full landing page with sections + dashboard screenshot (placeholder `LandingPage` now).
 - Rate limit per IP on `/api/auth/**`, retention/purge for `access_events`, Flyway, ADMIN role, prod profile, CI, Testcontainers.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).
