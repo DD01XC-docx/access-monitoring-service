@@ -24,8 +24,9 @@ README.md covers API, config, structure, limitations — read only when needed, 
 ## Decisions (do not revisit)
 - Login is email-only; `findByUsername` stays for JWT filter and profile.
 - Inactive account returns same 401 as bad password (no enumeration).
+- Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`.
 - Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
 
 ## Next
-- Lockout after N failed logins, rate limit, Flyway, ADMIN role, prod profile, CI, Testcontainers.
+- Rate limit per IP on `/api/auth/**`, Flyway, ADMIN role, prod profile, CI, Testcontainers.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).

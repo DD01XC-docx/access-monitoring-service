@@ -1,5 +1,6 @@
 package com.dd01xc.service.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import com.dd01xc.service.model.RegisterResponse;
 import com.dd01xc.service.model.User;
 import com.dd01xc.service.repository.AccessRepository;
 import com.dd01xc.service.repository.UserRepository;
+import com.dd01xc.service.service.exception.AccountLockedException;
 import com.dd01xc.service.service.exception.DuplicateAccountException;
 import com.dd01xc.service.service.exception.InvalidCredentialsException;
 
@@ -24,8 +26,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Service
 public class AuthService {
     //const
-    private static final String ACCESS_STATUS_SUCCESS = "SUCCESS";
-    private static final String ACCESS_STATUS_FAILED = "FAILED";
+    private static final String ACCESS_STATUS_SUCCESS = AccessEvent.STATUS_SUCCESS;
+    private static final String ACCESS_STATUS_FAILED = AccessEvent.STATUS_FAILED;
+    private static final String ACCESS_STATUS_LOCKED = AccessEvent.STATUS_LOCKED;
+    private static final String ACCOUNT_LOCKED_MESSAGE = "Too many failed attempts, try again later";
     private static final String USER_ROLE = "USER";
     private static final String USER_STATUS_ACTIVE = User.STATUS_ACTIVE;
     private static final String INVALID_CREDENTIALS_MESSAGE = "Invalid credentials";
@@ -37,23 +41,33 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AccessRepository accessRepository;
     private final JwtService jwtService;
+    private final LoginAttemptService loginAttemptService;
 
-    public AuthService (PasswordEncoder passwordEncoder, UserRepository userRepository, AccessRepository accessRepository, JwtService jwtService) {
+    public AuthService (PasswordEncoder passwordEncoder, UserRepository userRepository, AccessRepository accessRepository,
+            JwtService jwtService, LoginAttemptService loginAttemptService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.accessRepository = accessRepository;
         this.jwtService = jwtService;
+        this.loginAttemptService = loginAttemptService;
     }
-    
+
     //log
-    
-    @Transactional(noRollbackFor = InvalidCredentialsException.class)
+
+    @Transactional(noRollbackFor = {InvalidCredentialsException.class, AccountLockedException.class})
     public LoginResponse login(LoginRequest loginRequest, String clientIp) {
 
         long startTime = System.nanoTime();
-        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-        
         AccessEvent accessEvent = createAccessEvent(loginRequest.getEmail(), clientIp);
+
+        //LOCKED is not counted as FAILED, so attempts during lock do not extend it
+        Optional<Duration> lock = loginAttemptService.remainingLock(loginRequest.getEmail());
+        if (lock.isPresent()) {
+            saveAccessEvent(accessEvent, ACCESS_STATUS_LOCKED, startTime);
+            throw new AccountLockedException(ACCOUNT_LOCKED_MESSAGE, lock.get());
+        }
+
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
         if (!isValidCredentials(userOptional, loginRequest.getPassword())) {
             saveAccessEvent(accessEvent, ACCESS_STATUS_FAILED, startTime);

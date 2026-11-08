@@ -7,6 +7,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+
+import java.time.Duration;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +30,7 @@ import com.dd01xc.service.model.RegisterRequest;
 import com.dd01xc.service.model.RegisterResponse;
 import com.dd01xc.service.service.AuthService;
 import com.dd01xc.service.service.JwtService;
+import com.dd01xc.service.service.exception.AccountLockedException;
 import com.dd01xc.service.service.exception.DuplicateAccountException;
 import com.dd01xc.service.service.exception.InvalidCredentialsException;
 
@@ -75,6 +79,16 @@ class AuthControllerTest {
         postJson("/api/auth/login", LOGIN_JSON)
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("Invalid credentials"));
+    }
+
+    @Test
+    void login_accountLocked_returns429WithRetryAfter() throws Exception {
+        when(authService.login(any(LoginRequest.class), any()))
+                .thenThrow(new AccountLockedException("Too many failed attempts, try again later", Duration.ofMillis(90_500)));
+
+        postJson("/api/auth/login", LOGIN_JSON)
+                .andExpect(status().isTooManyRequests())
+                .andExpect(header().string("Retry-After", "91"));
     }
 
     @Test

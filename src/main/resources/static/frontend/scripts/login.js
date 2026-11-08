@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('username', data.username);
             localStorage.setItem('role', data.role);
             window.location.href = '/dashboard.html';
+        } else if (response.status === 429) {
+            const minutes = Math.ceil(Number(response.headers.get('Retry-After') || 60) / 60);
+            showMessage(loginMessage, `Too many failed attempts. Try again in ${minutes} min.`, 'error');
         } else {
             showMessage(loginMessage, 'Incorrect email or password!', 'error');
         }

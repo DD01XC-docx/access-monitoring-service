@@ -40,6 +40,8 @@ The dashboard aggregates these events into activity trends, failed-login ranking
 | `JWT_SECRET`        | yes      | —          | Base64-encoded HMAC key, at least 32 bytes when decoded |
 | `JWT_EXPIRATION_MS` | no       | `86400000` | Token lifetime in milliseconds (24 h)                  |
 | `DB_PASSWORD`       | no       | `root`     | PostgreSQL password                                    |
+| `AUTH_LOCKOUT_MAX_ATTEMPTS` | no | `5` | Failed logins per email that trigger a lockout |
+| `AUTH_LOCKOUT_WINDOW_MINUTES` | no | `15` | Lockout window in minutes |
 
 The application fails to start if `JWT_SECRET` is missing or too short.
 
@@ -107,6 +109,7 @@ Validation rules: username 3–20 characters (letters, digits, `_`, `.`, `-`), v
 | 401    | Invalid credentials, inactive account, missing or invalid token |
 | 403    | Authenticated but access denied              |
 | 409    | Username or email already registered         |
+| 429    | Login locked after too many failures (`Retry-After` header, seconds) |
 
 ## Project Structure
 

@@ -5,12 +5,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 //sql data-repo
 @Repository
 public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
     List<AccessEvent> findTop10ByOrderByCreatedAtDesc();
+
+    //lockout
+    Optional<AccessEvent> findTopByUsernameOrEmailAndStatusOrderByCreatedAtDesc(String usernameOrEmail, String status);
+
+    List<AccessEvent> findByUsernameOrEmailAndStatusAndCreatedAtAfterOrderByCreatedAtDesc(
+            String usernameOrEmail, String status, LocalDateTime after);
 
     //exists-logic
     long countByStatus(String status);

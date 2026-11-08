@@ -50,6 +50,8 @@ public class AuthServiceTest {
     private AccessRepository accessRepository;
     @Mock
     private JwtService jwtService;
+    @Mock
+    private LoginAttemptService loginAttemptService;
 
     @InjectMocks
     private AuthService authService;
@@ -119,6 +121,17 @@ public class AuthServiceTest {
         assertThat(event.getUsernameOrEmail()).isEqualTo(EMAIL);
         assertThat(event.getIpAddress()).isEqualTo(IP);
         assertThat(event.getDurationMs()).isNotNull().isGreaterThanOrEqualTo(0L);
+    }
+
+    @Test
+    void login_accountLocked_throwsLockedSavesLockedEventSkipsPasswordCheck() {
+        when(loginAttemptService.remainingLock(EMAIL)).thenReturn(Optional.of(java.time.Duration.ofMinutes(3)));
+
+        assertThatThrownBy(() -> authService.login(loginRequest(EMAIL, RAW_PASSWORD), IP))
+                .isInstanceOf(com.dd01xc.service.service.exception.AccountLockedException.class);
+
+        assertThat(capturedEvent().getStatus()).isEqualTo("LOCKED");
+        verifyNoInteractions(passwordEncoder, userRepository, jwtService);
     }
 
     @Test

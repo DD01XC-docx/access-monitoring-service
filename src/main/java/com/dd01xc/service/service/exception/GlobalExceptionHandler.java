@@ -3,6 +3,7 @@ package com.dd01xc.service.service.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
     
+    //AccountLockedException
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<String> handleAccountLocked(AccountLockedException ex) {
+        //round up, at least 1 second
+        long seconds = Math.max(1, (ex.getRetryAfter().toMillis() + 999) / 1000);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .header(HttpHeaders.RETRY_AFTER, String.valueOf(seconds))
+                .body(ex.getMessage());
+    }
+
     //DuplicateAccountException
     @ExceptionHandler(DuplicateAccountException.class)
     public ResponseEntity<String> handleDuplicateAccount(DuplicateAccountException ex) {
