@@ -27,6 +27,6 @@ README.md already covers API, config, structure, limitations — read it only wh
 
 ## Session notes (append only what saves time next session; drop stale lines)
 - JDK 21 + 25 installed; Mockito breaks on 25. Use `JAVA_HOME=$(/usr/libexec/java_home -v 21) ./mvnw test` unless JAVA_HOME already points to 21.
-- 2026-11-08: login hardened (dummy BCrypt hash `$2a$10$...` in AuthService, inactive account -> 401, password max 72). `AccountDisabledException` removed. 13 tests green.
+- 2026-11-08: login hardened (dummy BCrypt hash `$2a$10$...` in AuthService, inactive account -> 401, password max 72). `AccountDisabledException` removed. Login is email-only (user decision, email is essential). Username must match `^[A-Za-z0-9_.-]+$`, password <= 72 bytes via `@AssertTrue`. 18 tests green.
 - New agents in `.claude/agents/` need a Claude Code restart to be callable by name.
 - Endpoint typo kept as-is: `/api/access/stat/responce-time` (frontend depends on it).

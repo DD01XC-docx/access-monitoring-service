@@ -122,25 +122,11 @@ public class AuthServiceTest {
     }
 
     @Test
-    void login_identifierMatchesUsername_fallsBackToUsernameLookup() {
+    void login_usernameAsIdentifier_throwsInvalidCredentialsWithoutUsernameLookup() {
         when(userRepository.findByEmail(USERNAME)).thenReturn(Optional.empty());
-        when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(activeUser));
-        when(passwordEncoder.matches(RAW_PASSWORD, HASH)).thenReturn(true);
-        when(jwtService.generateToken(USERNAME, "USER")).thenReturn("jwt-token");
 
-        LoginResponse response = authService.login(loginRequest(USERNAME, RAW_PASSWORD), IP);
-
-        assertThat(response.token()).isEqualTo("jwt-token");
-        verify(userRepository).findByUsername(USERNAME);
-    }
-
-    @Test
-    void login_foundByEmail_doesNotQueryByUsername() {
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(activeUser));
-        when(passwordEncoder.matches(RAW_PASSWORD, HASH)).thenReturn(true);
-        when(jwtService.generateToken(USERNAME, "USER")).thenReturn("jwt-token");
-
-        authService.login(loginRequest(EMAIL, RAW_PASSWORD), IP);
+        assertThatThrownBy(() -> authService.login(loginRequest(USERNAME, RAW_PASSWORD), IP))
+                .isInstanceOf(InvalidCredentialsException.class);
 
         verify(userRepository, never()).findByUsername(any());
     }
@@ -148,7 +134,6 @@ public class AuthServiceTest {
     @Test
     void login_unknownUser_throwsInvalidCredentialsAndSavesFailedEvent() {
         when(userRepository.findByEmail("ghost@example.com")).thenReturn(Optional.empty());
-        when(userRepository.findByUsername("ghost@example.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.login(loginRequest("ghost@example.com", RAW_PASSWORD), IP))
                 .isInstanceOf(InvalidCredentialsException.class)

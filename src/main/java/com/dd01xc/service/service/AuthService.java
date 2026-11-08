@@ -51,7 +51,7 @@ public class AuthService {
     public LoginResponse login(LoginRequest loginRequest, String clientIp) {
 
         long startTime = System.nanoTime();
-        Optional<User> userOptional = findUserByEmailOrUsername(loginRequest.getEmail());
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
         
         AccessEvent accessEvent = createAccessEvent(loginRequest.getEmail(), clientIp);
 
@@ -109,11 +109,6 @@ public class AuthService {
 
     public String checkAuth() {
         return "Authenticated successfully";
-    }
-
-     private Optional<User> findUserByEmailOrUsername(String emailOrUsername) {
-        return userRepository.findByEmail(emailOrUsername)
-                .or(() -> userRepository.findByUsername(emailOrUsername));
     }
 
     private AccessEvent createAccessEvent(String usernameOrEmail, String clientIp) {
