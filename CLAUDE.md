@@ -1,12 +1,13 @@
 # CLAUDE.md
 
-Spring Boot 3.4 / Java 21 / Maven. JWT auth + access-event analytics, static frontend in `src/main/resources/static/`.
+Spring Boot 3.4 / Java 21 / Maven. JWT auth + access-event analytics, React frontend in `frontend/` (built into the jar by frontend-maven-plugin).
 README.md covers API, config, structure, limitations — read only when needed, do not duplicate here.
 
 ## Commands
 - Tests: `.claude/scripts/test.sh [-Dtest=Class]` (forces JDK 21, compact output). Never plain `./mvnw test`: default JDK is 25 and Mockito breaks on it.
-- Run DB: `docker compose up -d` (Postgres 16, `127.0.0.1:5444`, db `security_db`, postgres/root)
-- Run app: `JWT_SECRET=... ./mvnw spring-boot:run` (`JWT_SECRET` required)
+- Full stack: `docker compose up --build` (app :8080, `APP_PORT` to change). DB only: `docker compose up -d postgres` (Postgres 16, `127.0.0.1:5444`, db `security_db`, postgres/root)
+- Run app: `JAVA_HOME=$(/usr/libexec/java_home -v 21) ./mvnw spring-boot:run`; `JWT_SECRET` comes from gitignored `.env` (never print or commit it)
+- Frontend (`frontend/`, React+TS+Vite+Tailwind v4+shadcn `base-nova` = Base UI, not Radix: use `render` prop, no `asChild`): `npm --prefix frontend run dev` (:5173, proxies `/api` to :8080), `npm --prefix frontend run build`. Background shells ignore `cd`: use `--prefix`.
 
 ## Code map (`com.dd01xc.service`)
 - Auth: `controller/AuthController` -> `service/AuthService` -> `service/JwtService`; `config/JwtAuthenticationFilter`, `config/SecurityConfig`
@@ -28,5 +29,6 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Endpoint typo `/api/access/stat/responce-time` kept: `dashboard.js` uses it.
 
 ## Next
+- React migration (branch `feat/react-frontend`): done scaffold, auth, login/signup, profile. Done: Maven build into jar, `SpaController` forwards SPA routes (add new routes there AND in `SPA_ROUTES`), Docker. Todo: dashboard (Recharts, LOCKED/REGISTER_FAILED colors, lazy routes), full landing pages (placeholder `LandingPage` now).
 - Rate limit per IP on `/api/auth/**`, retention/purge for `access_events`, Flyway, ADMIN role, prod profile, CI, Testcontainers.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).

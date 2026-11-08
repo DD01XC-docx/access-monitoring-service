@@ -45,26 +45,42 @@ The dashboard aggregates these events into activity trends, failed-login ranking
 
 The application fails to start if `JWT_SECRET` is missing or too short.
 
-Generate a key:
+For local development, put variables in a `.env` file in the project root (gitignored, loaded via `spring.config.import`):
 
 ```bash
-export JWT_SECRET=$(openssl rand -base64 32)
+printf 'JWT_SECRET=%s\n' "$(openssl rand -base64 32)" > .env
 ```
 
-## Running Locally
+In production, set real environment variables instead; without them the application still refuses to start.
+
+## Running
+
+### Docker (everything in one command)
 
 ```bash
-docker compose up -d          # PostgreSQL on localhost:5444, database security_db
-./mvnw spring-boot:run        # application on localhost:8080
+printf 'JWT_SECRET=%s\n' "$(openssl rand -base64 32)" > .env   # once
+docker compose up --build
 ```
 
-| Page      | URL                                    |
-|-----------|----------------------------------------|
-| Landing   | http://localhost:8080/index.html       |
-| Sign up   | http://localhost:8080/signup.html      |
-| Login     | http://localhost:8080/login.html       |
-| Dashboard | http://localhost:8080/dashboard.html   |
-| Profile   | http://localhost:8080/myprofile.html   |
+Open http://localhost:8080. Set `APP_PORT` to use another host port.
+
+### Local development
+
+```bash
+docker compose up -d postgres          # PostgreSQL on localhost:5444
+./mvnw spring-boot:run                 # API + built UI on localhost:8080
+npm --prefix frontend run dev          # UI with hot reload on localhost:5173, proxies /api
+```
+
+`./mvnw package` builds the React app into the jar. Add `-Dskip.installnodenpm -Dskip.npm` to skip the frontend build.
+
+| Page      | Path         |
+|-----------|--------------|
+| Landing   | `/`          |
+| Sign up   | `/signup`    |
+| Login     | `/login`     |
+| Dashboard | `/dashboard` |
+| Profile   | `/profile`   |
 
 Optional seed data: `mock-data.sql`, `test-data.sql`.
 
@@ -116,15 +132,20 @@ Validation rules: username 3–20 characters (letters, digits, `_`, `.`, `-`), v
 ```text
 src/main/java/com/dd01xc/service/
 ├── config/              Security configuration, JWT filter
-├── controller/          REST controllers
+├── controller/          REST controllers, SPA route forwarding
 ├── init/                Startup data initialization
 ├── model/               JPA entities and DTOs
 ├── repository/          Repositories and analytics queries
 └── service/             Business logic
     └── exception/       Domain exceptions, global handler
 src/main/resources/
-├── application.properties
-└── static/              Frontend pages, scripts, styles, assets
+└── application.properties
+frontend/                React + TypeScript + Vite + Tailwind + shadcn/ui
+└── src/
+    ├── components/      Layout and UI components
+    ├── lib/             API client, session, validation
+    └── pages/           Landing, login, signup, dashboard, profile
+Dockerfile               Multi-stage build: frontend, jar, JRE runtime
 ```
 
 ## Known Limitations
