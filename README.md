@@ -1,5 +1,7 @@
 # AMC — Access Monitoring Console
 
+[![CI](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/ci.yml/badge.svg)](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/ci.yml)
+
 Self-hosted service that records every authentication attempt, locks brute-force attacks and turns the audit trail into a live security dashboard.
 
 **Spring Boot 3.4 · Java 21 · PostgreSQL 16 · React 19 · TypeScript · Tailwind CSS · Docker**

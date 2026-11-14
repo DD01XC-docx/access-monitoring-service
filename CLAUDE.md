@@ -35,9 +35,10 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- State 2026-11-14: Phase 0 in progress: PR 1 `build/flyway-testcontainers` (Flyway + Testcontainers), next PR 2 CI workflow, PR 3 security scanning.
+- State 2026-11-14: Phase 0: PR 1 Flyway + Testcontainers merged; PR 2 `ci/github-actions` (`.github/workflows/ci.yml`: verify, frontend lint, docker build); next PR 3 security scanning.
 - Product direction: AI agent monitoring ("AMC Agents"), brief in `docs/agent-monitoring.md`. Work phase by phase: plan, approval, then code. Open questions in its section 7 have proposed defaults, not decisions.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
-- Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off). CI is agent brief Phase 0. Optional: README screenshot `docs/dashboard.png`.
+- CI actions are pinned to commit SHAs with a `# vX.Y.Z` comment; resolve SHAs via `gh api`, never from memory.
+- Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off). Optional: README screenshot `docs/dashboard.png`.
 - Integration tests: `PostgresIntegrationTest` (`@SpringBootTest` + `@ServiceConnection` Postgres 16 container, `@Transactional` rollback); skipped without Docker.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).
