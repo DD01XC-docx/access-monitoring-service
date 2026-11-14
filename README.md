@@ -101,7 +101,7 @@ Locally, the variables are read from `.env` in the project root. The file is git
 
 ## API
 
-Every endpoint except `/api/auth/**` requires `Authorization: Bearer <token>`.
+Every endpoint except `/api/auth/**` and the agent API requires `Authorization: Bearer <token>`.
 
 | Method | Path                             | Description                                  |
 |--------|----------------------------------|----------------------------------------------|
@@ -117,8 +117,17 @@ Every endpoint except `/api/auth/**` requires `Authorization: Bearer <token>`.
 | GET    | `/api/access/stat/health`        | Database health                              |
 | GET    | `/api/access/stat/responce-time` | Login latency distribution by hour           |
 | GET    | `/api/access/logs/recent`        | Last 10 access events                        |
+| POST   | `/api/agents/keys`               | Create an agent API key (shown once)         |
+| GET    | `/api/agents/keys`               | List own agent keys (no secrets)             |
+| DELETE | `/api/agents/keys/{id}`          | Revoke an own agent key                      |
 
 `range` accepts `1h`, `24h` or `7d`.
+
+**Agent API** (`/api/agent/**`) is for AI agent hooks and accepts only `X-AMC-Agent-Key: amc_<prefix>_<secret>`, never a user JWT; user endpoints never accept an agent key. Missing, wrong and revoked keys all return 401.
+
+| Method | Path                  | Description                                 |
+|--------|-----------------------|---------------------------------------------|
+| GET    | `/api/agent/whoami`   | Key name and prefix, to check a hook setup  |
 
 **Validation:** username 3–20 characters (letters, digits, `_`, `.`, `-`), a valid email up to 254 characters, and a password of at least 8 characters and at most 72 bytes.
 
@@ -127,7 +136,8 @@ Every endpoint except `/api/auth/**` requires `Authorization: Bearer <token>`.
 | 400    | Validation failed; the body maps each field to a message         |
 | 401    | Invalid credentials, inactive account, or a missing or bad token |
 | 403    | Authenticated, but access is denied                              |
-| 409    | Username or email already registered                             |
+| 404    | Agent key not found (or owned by another user)                   |
+| 409    | Username or email already registered, or agent key limit (10) reached |
 | 429    | Login locked; `Retry-After` gives the wait in seconds            |
 
 ## Testing

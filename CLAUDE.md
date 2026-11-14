@@ -13,6 +13,7 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Auth: `controller/AuthController` -> `service/AuthService` -> `service/JwtService`; `config/JwtAuthenticationFilter`, `config/SecurityConfig`
 - Errors: `service/exception/` + `GlobalExceptionHandler` (401 bad creds or inactive, 409 duplicate, 400 validation)
 - Analytics: `controller/AccessController` -> `service/AccessStatService` -> `repository/AccessRepository` (native SQL)
+- Agents (`agent/`): `controller/AgentKeyController` (`/api/agents/keys`, JWT) and `AgentController` (`/api/agent/**`, key) -> `service/AgentKeyService` -> `repository/AgentKeyRepository`; `security/AgentSecurityConfig` (own chain, `@Order(1)`) + `AgentKeyAuthenticationFilter`
 - Seed: `init/DataInitializer`, `mock-data.sql`, `test-data.sql`
 
 ## Rules
@@ -32,11 +33,13 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - `access_events.created_at` is `Instant`/`timestamptz`; chart buckets are ISO-8601 UTC, frontend formats in viewer zone.
 - Schema owned by Flyway (`db/migration`, `ddl-auto=validate`); every schema change is a new `V<n>__*.sql`, never edit applied ones. Pre-Flyway DBs baseline as V1.
 - Spring Boot 4 (from 3.4.1, whose deps had 12 CRITICAL CVEs): modular starters (`spring-boot-starter-webmvc`, `-flyway`, `-webmvc-test`, `-security-test`); `@WebMvcTest` is in `org.springframework.boot.webmvc.test.autoconfigure`; Testcontainers 2 (`testcontainers-postgresql`, `org.testcontainers.postgresql.PostgreSQLContainer`). App code uses no Jackson directly; jjwt-jackson stays on Boot-managed Jackson 2.
+- Agent auth: `/api/agent/**` = machines, `X-AMC-Agent-Key` only (own `SecurityFilterChain`); `/api/agents/**` = humans, JWT only. Key `amc_<12 hex>_<64 hex>`, stored as SHA-256 of the secret (256 random bits, so no bcrypt: it would add ~100 ms per tool call), constant-time compare, one 401 for all failures, owner must be active, max 10 active keys, revoke is soft + idempotent, other users' keys are 404. `last_used_at` written at most once a minute.
+- Security filters are never plain `@Component`s (Boot would also register them globally); `JwtAuthenticationFilter` has a disabled `FilterRegistrationBean`.
 - Endpoint typo `/api/access/stat/responce-time` kept: frontend `lib/api.ts` uses it.
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- State 2026-11-14: Phase 0 last PR `ci/security-scanning` (CodeQL, Dependabot, gitleaks, Trivy gate, SBOM). After merge: Phase 1 plan (agent ingestion). Open: profile dates are locale strings, not ISO.
+- State 2026-11-14: Phase 0 done (Flyway, Testcontainers, CI, CodeQL/gitleaks/Trivy/SBOM, Boot 4). Phase 1: PR 1a `feat/agent-keys` (V2 `agent_keys`, key auth); next 1b ingestion (`agent_events`, Redactor, rate limit per key, `tools/amc-hook`), 1c `/agents` UI incl. key management. Open: profile dates are locale strings, not ISO.
 - Product direction: AI agent monitoring ("AMC Agents"), brief in `docs/agent-monitoring.md`. Work phase by phase: plan, approval, then code. Open questions in its section 7 have proposed defaults, not decisions.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
 - Security workflows: `.github/workflows/{codeql,security}.yml`; reviewed gitleaks false positives go in `.gitleaksignore` (fingerprint), never disable rules. SBOM via Boot-managed CycloneDX plugin (no own config).

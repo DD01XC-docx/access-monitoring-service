@@ -37,6 +37,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    //AgentKeyLimitException
+    @ExceptionHandler(AgentKeyLimitException.class)
+    public ResponseEntity<String> handleAgentKeyLimit(AgentKeyLimitException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    //AgentKeyNotFoundException
+    @ExceptionHandler(AgentKeyNotFoundException.class)
+    public ResponseEntity<String> handleAgentKeyNotFound(AgentKeyNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
     //MethodArgumentNotValidException
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
