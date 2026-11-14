@@ -1,5 +1,5 @@
-#full stack: docker compose up --build   (needs JWT_SECRET in .env)
-#database only, for local dev: docker compose up -d postgres
+# full stack: docker compose up --build   (needs JWT_SECRET in .env)
+# database only, for local dev: docker compose up -d postgres
 
 services:
   postgres:
