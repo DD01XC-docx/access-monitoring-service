@@ -92,7 +92,7 @@ public class AgentKeyService {
     //empty for every failure reason, so callers can't tell them apart
     @Transactional
     public Optional<AgentPrincipal> authenticate(String rawKey) {
-        Matcher m = rawKey == null ? null : KEY_FORMAT.matcher(rawKey);
+        Matcher m = rawKey == null ? null : KEY_FORMAT.matcher(rawKey.strip());
         if (m == null || !m.matches()) {
             return Optional.empty();
         }

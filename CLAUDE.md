@@ -43,6 +43,8 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Product direction: AI agent monitoring ("AMC Agents"), brief in `docs/agent-monitoring.md`. Work phase by phase: plan, approval, then code. Open questions in its section 7 have proposed defaults, not decisions.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
 - Security workflows: `.github/workflows/{codeql,security}.yml`; reviewed gitleaks false positives go in `.gitleaksignore` (fingerprint), never disable rules. SBOM via Boot-managed CycloneDX plugin (no own config).
+- Base images stay on LTS (Temurin 21, Node 22); Dependabot ignores their majors (it offered EOL Temurin 24, which failed Trivy). LTS moves are manual, everywhere at once (Dockerfile, `frontend.node.version`, CI).
+- CodeQL `spring-disabled-csrf-protection` and `user-controlled-bypass` on the JWT chain are dismissed as false positives (header-only auth, no cookies; missing credentials stay anonymous -> 401). Review new alerts before merging; never merge with red checks.
 - CI actions are pinned to commit SHAs with a `# vX.Y.Z` comment; resolve SHAs via `gh api`, never from memory.
 - Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off). Optional: README screenshot `docs/dashboard.png`.
 - Integration tests: `PostgresIntegrationTest` (`@SpringBootTest` + `@ServiceConnection` Postgres 16 container, `@Transactional` rollback); skipped without Docker.

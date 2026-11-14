@@ -31,11 +31,9 @@ public class AgentKeyAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        String rawKey = request.getHeader(HEADER);
-        if (rawKey != null) {
-            agentKeyService.authenticate(rawKey.strip()).ifPresent(principal ->
-                SecurityContextHolder.getContext().setAuthentication(new AgentAuthentication(principal)));
-        }
+        //no branching on the header: the service rejects null/blank like any bad key
+        agentKeyService.authenticate(request.getHeader(HEADER)).ifPresent(principal ->
+            SecurityContextHolder.getContext().setAuthentication(new AgentAuthentication(principal)));
         chain.doFilter(request, response);
     }
 
