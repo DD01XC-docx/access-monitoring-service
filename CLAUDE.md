@@ -28,11 +28,13 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Inactive account returns same 401 as bad password (no enumeration).
 - Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`. Duplicate signups log `REGISTER_FAILED` (must not count toward lockout). Login takes `pg_advisory_xact_lock(hashtext(email))` first (Postgres-only; H2 can't run it).
 - Analytics responses mask accounts and IPs (`util/Masking`, `AccessEventDTO`); DB keeps raw values. Never return entities from `/api/access/**`.
+- Failed-login analytics include unknown emails (filtering to existing accounts made the dashboard an account-existence oracle). SLA uses the selected range and the same rows as the activity chart.
+- `access_events.created_at` is `Instant`/`timestamptz`; chart buckets are ISO-8601 UTC, frontend formats in viewer zone. `init/TimestampMigration` is a one-off until Flyway.
 - Endpoint typo `/api/access/stat/responce-time` kept: frontend `lib/api.ts` uses it.
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- State 2026-11-08: React migration complete on `feat/react-frontend` (branched from `fix/auth-hardening`, neither merged to `main`). README rewritten. Merge order: `fix/auth-hardening` -> main, then `feat/react-frontend`.
+- State 2026-11-14: React frontend and `fix/ip-privacy` merged to `main`. `fix/dashboard-stats` open as PR. Hibernate `ddl-auto=update` already altered `created_at` to timestamptz on the dev DB, so `TimestampMigration` was a no-op there.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
 - Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, Testcontainers, Flyway, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off), CI. Optional: README screenshot `docs/dashboard.png`.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).
