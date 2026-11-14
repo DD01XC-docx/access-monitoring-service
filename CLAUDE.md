@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Spring Boot 3.4 / Java 21 / Maven. JWT auth + access-event analytics, React frontend in `frontend/` (built into the jar by frontend-maven-plugin).
+Spring Boot 4.0 / Java 21 / Maven. JWT auth + access-event analytics, React frontend in `frontend/` (built into the jar by frontend-maven-plugin).
 README.md covers API, config, structure, limitations — read only when needed, do not duplicate here.
 
 ## Commands
@@ -30,12 +30,13 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Analytics responses mask accounts and IPs (`util/Masking`, `AccessEventDTO`); DB keeps raw values. Never return entities from `/api/access/**`.
 - Failed-login analytics include unknown emails (filtering to existing accounts made the dashboard an account-existence oracle). SLA uses the selected range and the same rows as the activity chart.
 - `access_events.created_at` is `Instant`/`timestamptz`; chart buckets are ISO-8601 UTC, frontend formats in viewer zone.
-- Schema owned by Flyway (`db/migration`, `ddl-auto=validate`); every schema change is a new `V<n>__*.sql`, never edit applied ones. Pre-Flyway DBs baseline as V1. Testcontainers pinned to 1.21.4 (1.20.x from Boot 3.4.1 fails on Docker Engine 29+).
+- Schema owned by Flyway (`db/migration`, `ddl-auto=validate`); every schema change is a new `V<n>__*.sql`, never edit applied ones. Pre-Flyway DBs baseline as V1.
+- Spring Boot 4 (from 3.4.1, whose deps had 12 CRITICAL CVEs): modular starters (`spring-boot-starter-webmvc`, `-flyway`, `-webmvc-test`, `-security-test`); `@WebMvcTest` is in `org.springframework.boot.webmvc.test.autoconfigure`; Testcontainers 2 (`testcontainers-postgresql`, `org.testcontainers.postgresql.PostgreSQLContainer`). App code uses no Jackson directly; jjwt-jackson stays on Boot-managed Jackson 2.
 - Endpoint typo `/api/access/stat/responce-time` kept: frontend `lib/api.ts` uses it.
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- State 2026-11-14: Phase 0: PR 1 Flyway + Testcontainers merged; PR 2 `ci/github-actions` (`.github/workflows/ci.yml`: verify, frontend lint, docker build); next PR 3 security scanning.
+- State 2026-11-14: Phase 0: PRs 1-2 merged. PR `build/spring-boot-4` (Trivy found 48 CRITICAL/HIGH on Boot 3.4.1, 0 after). Then rebase local `ci/security-scanning` (CodeQL, Dependabot, gitleaks, Trivy, SBOM; WIP commit, not pushed) onto main.
 - Product direction: AI agent monitoring ("AMC Agents"), brief in `docs/agent-monitoring.md`. Work phase by phase: plan, approval, then code. Open questions in its section 7 have proposed defaults, not decisions.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
 - CI actions are pinned to commit SHAs with a `# vX.Y.Z` comment; resolve SHAs via `gh api`, never from memory.

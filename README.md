@@ -4,7 +4,7 @@
 
 Self-hosted service that records every authentication attempt, locks brute-force attacks and turns the audit trail into a live security dashboard.
 
-**Spring Boot 3.4 · Java 21 · PostgreSQL 16 · React 19 · TypeScript · Tailwind CSS · Docker**
+**Spring Boot 4.0 · Java 21 · PostgreSQL 16 · React 19 · TypeScript · Tailwind CSS · Docker**
 
 > Portfolio and learning project. Built with production practices in mind, but not intended for production use.
 
@@ -59,7 +59,7 @@ flowchart LR
 
 | Layer    | Technology                                                                 |
 |----------|----------------------------------------------------------------------------|
-| Backend  | Java 21, Spring Boot 3.4, Spring Security, Spring Data JPA, Bean Validation |
+| Backend  | Java 21, Spring Boot 4.0, Spring Security 7, Hibernate 7, Spring Data JPA, Bean Validation |
 | Auth     | Stateless JWT (jjwt 0.12), BCrypt                                           |
 | Database | PostgreSQL 16                                                               |
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui, Recharts           |
