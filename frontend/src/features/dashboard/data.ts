@@ -9,7 +9,7 @@ export function useDashboard(range: TimeRange) {
   return {
     activity: useQuery({ queryKey: ['activity', range], queryFn: () => api.activity(range), ...live }),
     alertLevels: useQuery({ queryKey: ['alert-levels', range], queryFn: () => api.alertLevels(range), ...live }),
-    sla: useQuery({ queryKey: ['sla'], queryFn: api.sla, ...live }),
+    sla: useQuery({ queryKey: ['sla', range], queryFn: () => api.sla(range), ...live }),
     topFailed: useQuery({ queryKey: ['top-failed'], queryFn: api.topFailed, ...live }),
     accounts: useQuery({ queryKey: ['accounts'], queryFn: api.accounts, ...live }),
     health: useQuery({ queryKey: ['health'], queryFn: api.health, ...live }),
@@ -18,11 +18,21 @@ export function useDashboard(range: TimeRange) {
   }
 }
 
+const hourFormat = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' })
+const dayFormat = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' })
+
+//ISO UTC bucket start -> label in the viewer's time zone
+export function formatBucket(iso: string, range: TimeRange = '24h'): string {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return iso
+  return (range === '7d' ? dayFormat : hourFormat).format(date)
+}
+
 //{categories, series[]} -> [{label, <series name>: value}] for Recharts
-export function toRows(chart: ChartData | undefined): Record<string, string | number>[] {
+export function toRows(chart: ChartData | undefined, range?: TimeRange): Record<string, string | number>[] {
   if (!chart) return []
-  return chart.categories.map((label, i) => {
-    const row: Record<string, string | number> = { label }
+  return chart.categories.map((category, i) => {
+    const row: Record<string, string | number> = { label: formatBucket(category, range) }
     for (const s of chart.series) row[s.name] = s.data[i] ?? 0
     return row
   })

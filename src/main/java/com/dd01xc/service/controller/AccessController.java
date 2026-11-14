@@ -35,8 +35,8 @@ public class AccessController {
     }
 
     @GetMapping("/stat/sla")
-    public Map<String, Object> getSlaStatus() {
-        return accessStatService.getSlaStatus(); 
+    public Map<String, Object> getSlaStatus(@RequestParam(defaultValue = DEFAULT_TIME_RANGE) String range) {
+        return accessStatService.getSlaStatus(range);
     }
 
     @GetMapping("/stat/alert-lvls")

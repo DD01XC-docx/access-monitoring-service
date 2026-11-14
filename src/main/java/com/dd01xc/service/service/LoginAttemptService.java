@@ -2,7 +2,7 @@ package com.dd01xc.service.service;
 
 import java.time.Clock;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public class LoginAttemptService {
     public LoginAttemptService(AccessRepository accessRepository,
             @Value("${auth.lockout.max-attempts:5}") int maxAttempts,
             @Value("${auth.lockout.window-minutes:15}") long windowMinutes) {
-        this(accessRepository, maxAttempts, Duration.ofMinutes(windowMinutes), Clock.systemDefaultZone());
+        this(accessRepository, maxAttempts, Duration.ofMinutes(windowMinutes), Clock.systemUTC());
     }
 
     LoginAttemptService(AccessRepository accessRepository, int maxAttempts, Duration window, Clock clock) {
@@ -38,11 +38,11 @@ public class LoginAttemptService {
 
     //empty if not locked, otherwise time left until unlock
     public Optional<Duration> remainingLock(String email) {
-        LocalDateTime now = LocalDateTime.now(clock);
-        LocalDateTime since = now.minus(window);
+        Instant now = clock.instant();
+        Instant since = now.minus(window);
 
         //failures before the last successful login do not count
-        Optional<LocalDateTime> lastSuccess = accessRepository.findLastEventTime(email, AccessEvent.STATUS_SUCCESS);
+        Optional<Instant> lastSuccess = accessRepository.findLastEventTime(email, AccessEvent.STATUS_SUCCESS);
         if (lastSuccess.isPresent() && lastSuccess.get().isAfter(since)) {
             since = lastSuccess.get();
         }
@@ -53,7 +53,7 @@ public class LoginAttemptService {
         }
 
         //unlocks when the maxAttempts-th newest failure leaves the window
-        LocalDateTime unlockAt = failures.get(maxAttempts - 1).getCreatedAt().plus(window);
+        Instant unlockAt = failures.get(maxAttempts - 1).getCreatedAt().plus(window);
         return Optional.of(Duration.between(now, unlockAt));
     }
 }

@@ -1,6 +1,6 @@
 package com.dd01xc.service.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import com.dd01xc.service.util.Masking;
 
@@ -9,7 +9,7 @@ public record AccessEventDTO(
     Long id,
     String usernameOrEmail,
     String status,
-    LocalDateTime createdAt,
+    Instant createdAt,
     String ipAddress,
     Long durationMs
 ) {
