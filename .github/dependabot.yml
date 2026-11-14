@@ -27,7 +27,14 @@ updates:
       actions:
         patterns: ['*']
 
+  #base images: patches only; Java/Node majors are moved to the next LTS by hand
+  #(Dependabot would also offer non-LTS majors, e.g. Temurin 24, which went EOL and failed Trivy)
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: eclipse-temurin
+        update-types: [version-update:semver-major]
+      - dependency-name: node
+        update-types: [version-update:semver-major]
