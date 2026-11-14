@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 //sql data-repo
@@ -21,42 +21,21 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
     //explicit JPQL: derived names would parse "UsernameOrEmail" as "username OR email"
     @Query("SELECT MAX(a.createdAt) FROM AccessEvent a WHERE a.usernameOrEmail = :account AND a.status = :status")
-    Optional<LocalDateTime> findLastEventTime(@Param("account") String account, @Param("status") String status);
+    Optional<Instant> findLastEventTime(@Param("account") String account, @Param("status") String status);
 
     @Query("SELECT a FROM AccessEvent a WHERE a.usernameOrEmail = :account AND a.status = :status"
             + " AND a.createdAt > :after ORDER BY a.createdAt DESC")
     List<AccessEvent> findEventsAfter(@Param("account") String account, @Param("status") String status,
-            @Param("after") LocalDateTime after);
+            @Param("after") Instant after);
 
-    //exists-logic
-    long countByStatus(String status);
-
-    @Query(value = """
-        SELECT COUNT(*)
-        FROM access_events ae
-        WHERE ae.status = 'FAILED'
-        AND EXISTS (
-            SELECT 1
-            FROM users u
-            WHERE u.email = ae.username_or_email
-            OR u.username = ae.username_or_email
-        )
-        """, nativeQuery = true)
-    long countFailedForExistingAccounts();
+    //bucket labels are ISO-8601 UTC; the frontend formats them in the viewer's time zone
+    //failed counts include unknown emails: credential stuffing must be visible
 
     //1h sql
     @Query(value = """
-        SELECT to_char(gs.bucket_start, 'HH24:MI') AS bucket,
+        SELECT to_char(gs.bucket_start AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS bucket,
         COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
-        COUNT(ae.id) FILTER (
-            WHERE ae.status = 'FAILED'
-            AND EXISTS (
-                SELECT 1
-                FROM users u
-                WHERE u.email = ae.username_or_email
-                OR u.username = ae.username_or_email
-            )
-        ) AS failed
+        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
         FROM generate_series(
             date_trunc('minute', now()) - interval '59 minutes',
             date_trunc('minute', now()),
@@ -72,17 +51,9 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
     //24h sql
     @Query(value = """
-        SELECT to_char(gs.bucket_start, 'HH24:00') AS bucket,
+        SELECT to_char(gs.bucket_start AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS bucket,
         COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
-        COUNT(ae.id) FILTER (
-            WHERE ae.status = 'FAILED'
-            AND EXISTS (
-                SELECT 1
-                FROM users u
-                WHERE u.email = ae.username_or_email
-                OR u.username = ae.username_or_email
-            )
-        ) AS failed
+        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
         FROM generate_series(
             date_trunc('hour', now()) - interval '23 hours',
             date_trunc('hour', now()),
@@ -98,17 +69,9 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
     //7days sql
     @Query(value = """
-        SELECT to_char(gs.bucket_start, 'DD Mon') AS bucket,
+        SELECT to_char(gs.bucket_start AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS bucket,
         COUNT(ae.id) FILTER (WHERE ae.status = 'SUCCESS') AS successful,
-        COUNT(ae.id) FILTER (
-            WHERE ae.status = 'FAILED'
-            AND EXISTS (
-                SELECT 1
-                FROM users u
-                WHERE u.email = ae.username_or_email
-                OR u.username = ae.username_or_email
-            )
-        ) AS failed
+        COUNT(ae.id) FILTER (WHERE ae.status = 'FAILED') AS failed
         FROM generate_series(
             date_trunc('day', now()) - interval '6 days',
             date_trunc('day', now()),
@@ -130,12 +93,6 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
         FROM access_events ae
         WHERE ae.status = 'FAILED'
         AND ae.created_at >= now() - interval '24 hours'
-        AND EXISTS (
-            SELECT 1
-            FROM users u
-            WHERE u.email = ae.username_or_email
-            OR u.username = ae.username_or_email
-        )
         GROUP BY ae.username_or_email
         ORDER BY failed_count DESC
         LIMIT 5
@@ -153,7 +110,7 @@ public interface AccessRepository extends JpaRepository<AccessEvent, Long> {
 
     //responce-time
     @Query(value = """
-        SELECT to_char(date_trunc('hour', ae.created_at), 'HH24:00') AS bucket,
+        SELECT to_char(date_trunc('hour', ae.created_at) AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS bucket,
         MIN(ae.duration_ms) AS min,
         percentile_cont(0.25) WITHIN GROUP (ORDER BY ae.duration_ms) AS val1,
         percentile_cont(0.5) WITHIN GROUP (ORDER BY ae.duration_ms) AS median,

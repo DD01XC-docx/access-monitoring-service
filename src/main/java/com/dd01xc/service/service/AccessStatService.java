@@ -21,7 +21,6 @@ public class AccessStatService {
     private static final String RANGE_1H = "1h";
     private static final String RANGE_24H = "24h";
     private static final String RANGE_7D = "7d";
-    private static final String STATUS_SUCCESS = "SUCCESS";
     private final AccessRepository accessRepository;
     private final UserRepository userRepository;
 
@@ -67,14 +66,20 @@ public class AccessStatService {
 
     //getSlaStatus
 
-    public Map<String, Object> getSlaStatus() {
-
-        long success = accessRepository.countByStatus(STATUS_SUCCESS);
-        long failed = accessRepository.countFailedForExistingAccounts();
+    //success rate over the same range and rows as the activity chart, so the KPI cards agree
+    public Map<String, Object> getSlaStatus(String range) {
+        long success = 0;
+        long failed = 0;
+        for (Object[] row : loadRowsByRange(range)) {
+            success += extractNumber(row, 1);
+            failed += extractNumber(row, 2);
+        }
         long total = success + failed;
-        int percentage = (total > 0) ? (int) ((double) success / total * 100) : 0;
-
-        return Map.of("series", List.of(percentage));
+        //no logins in range: empty series, shown as "–" instead of a misleading 0%
+        List<Integer> series = total > 0
+            ? List.of((int) Math.round((double) success / total * 100))
+            : List.of();
+        return Map.of("series", series);
     }
 
     //getAlertLevels

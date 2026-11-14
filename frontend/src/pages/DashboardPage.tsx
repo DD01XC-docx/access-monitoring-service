@@ -61,7 +61,7 @@ export function DashboardPage() {
         <KpiCard
           label="Login success rate"
           value={sla != null ? `${sla}%` : '–'}
-          hint="Successful share of all logins"
+          hint={`Successful share of logins, ${RANGE_TEXT[range]}`}
           icon={Gauge}
           tone={sla == null ? 'neutral' : sla >= 95 ? 'good' : sla >= 80 ? 'warn' : 'bad'}
           loading={d.sla.isPending}
@@ -101,7 +101,7 @@ export function DashboardPage() {
           error={d.activity.isError}
           empty={!hasPoints(d.activity.data)}
         >
-          <ActivityChart data={d.activity.data} />
+          <ActivityChart data={d.activity.data} range={range} />
         </Panel>
         <Panel
           title="Top failed accounts"
@@ -122,7 +122,7 @@ export function DashboardPage() {
           error={d.alertLevels.isError}
           empty={!hasPoints(d.alertLevels.data)}
         >
-          <AlertLevelsChart data={d.alertLevels.data} />
+          <AlertLevelsChart data={d.alertLevels.data} range={range} />
         </Panel>
         <div className="grid gap-4">
           <Panel

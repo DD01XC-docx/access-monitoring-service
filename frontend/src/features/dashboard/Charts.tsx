@@ -8,8 +8,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
-import type { ChartData, PointSeries } from '@/lib/api'
-import { toRows } from './data'
+import type { ChartData, PointSeries, TimeRange } from '@/lib/api'
+import { formatBucket, toRows } from './data'
 
 const axis = { tickLine: false, axisLine: false, tickMargin: 8, minTickGap: 24 } as const
 
@@ -18,10 +18,10 @@ const activityConfig = {
   Failed: { label: 'Failed', color: 'var(--chart-2)' },
 } satisfies ChartConfig
 
-export function ActivityChart({ data }: { data?: ChartData }) {
+export function ActivityChart({ data, range }: { data?: ChartData; range: TimeRange }) {
   return (
     <ChartContainer config={activityConfig} className="aspect-auto h-72 w-full">
-      <AreaChart data={toRows(data)} margin={{ left: -16, right: 8 }}>
+      <AreaChart data={toRows(data, range)} margin={{ left: -16, right: 8 }}>
         <defs>
           {Object.keys(activityConfig).map((key) => (
             <linearGradient key={key} id={`fill-${key}`} x1="0" y1="0" x2="0" y2="1">
@@ -49,11 +49,11 @@ const alertConfig = {
   Critical: { label: 'Critical', color: 'var(--chart-4)' },
 } satisfies ChartConfig
 
-export function AlertLevelsChart({ data }: { data?: ChartData }) {
+export function AlertLevelsChart({ data, range }: { data?: ChartData; range: TimeRange }) {
   const keys = Object.keys(alertConfig) as (keyof typeof alertConfig)[]
   return (
     <ChartContainer config={alertConfig} className="aspect-auto h-72 w-full">
-      <BarChart data={toRows(data)} margin={{ left: -16, right: 8 }}>
+      <BarChart data={toRows(data, range)} margin={{ left: -16, right: 8 }}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="label" {...axis} />
         <YAxis allowDecimals={false} {...axis} />
@@ -83,17 +83,18 @@ type Latency = PointSeries<[number, number, number, number, number]>
 export function ResponseTimeChart({ data }: { data?: Latency }) {
   //box plot -> median line with interquartile band
   const rows = (data?.series[0]?.data ?? []).map(({ x, y: [, q1, median, q3] }) => ({
-    label: x,
+    label: formatBucket(x),
     median: Math.round(median),
     spread: [Math.round(q1), Math.round(q3)],
   }))
 
   return (
     <ChartContainer config={latencyConfig} className="aspect-auto h-56 w-full">
-      <ComposedChart data={rows} margin={{ left: -16, right: 8 }}>
+      <ComposedChart data={rows} margin={{ left: 0, right: 8 }}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="label" {...axis} />
-        <YAxis unit="ms" {...axis} />
+        {/* "ms" labels are wider than plain counts: no negative margin, fixed width */}
+        <YAxis unit="ms" width={56} {...axis} />
         <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
         <Area dataKey="spread" type="monotone" stroke="none" fill="var(--color-spread)" fillOpacity={0.15} />
         <Line dataKey="median" type="monotone" stroke="var(--color-median)" strokeWidth={2} dot={{ r: 3 }} />

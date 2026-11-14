@@ -1,6 +1,6 @@
 package com.dd01xc.service.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,8 +30,9 @@ public class AccessEvent {
     private String usernameOrEmail;
     @Column(nullable = false)
     private String status;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    //UTC instant, stored as timestamptz (see init/TimestampMigration)
+    @Column(nullable = false, columnDefinition = "timestamptz")
+    private Instant createdAt;
     @Column(name = "ip_address")
     private String ipAddress;
     @Column(name = "duration_ms")
@@ -52,10 +53,10 @@ public class AccessEvent {
     public void setStatus(String status) {
         this.status = status;
     }
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
     public void setIpAddress(String ipAddress) {this.ipAddress = ipAddress;}
@@ -71,7 +72,7 @@ public class AccessEvent {
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {
-            createdAt = LocalDateTime.now();
+            createdAt = Instant.now();
         }
     }
 }

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +26,7 @@ import com.dd01xc.service.repository.AccessRepository;
 class LoginAttemptServiceTest {
 
     private static final String EMAIL = "john@example.com";
-    private static final LocalDateTime NOW = LocalDateTime.of(2026, 1, 1, 12, 0);
+    private static final Instant NOW = Instant.parse("2026-01-01T12:00:00Z");
     private static final Duration WINDOW = Duration.ofMinutes(15);
 
     @Mock
@@ -37,13 +36,13 @@ class LoginAttemptServiceTest {
 
     @BeforeEach
     void setUp() {
-        Clock clock = Clock.fixed(Instant.parse("2026-01-01T12:00:00Z"), ZoneOffset.UTC);
+        Clock clock = Clock.fixed(NOW, ZoneOffset.UTC);
         service = new LoginAttemptService(accessRepository, 5, WINDOW, clock);
     }
 
     private AccessEvent eventMinutesAgo(int minutes) {
         AccessEvent event = new AccessEvent();
-        event.setCreatedAt(NOW.minusMinutes(minutes));
+        event.setCreatedAt(NOW.minus(Duration.ofMinutes(minutes)));
         return event;
     }
 
@@ -57,7 +56,7 @@ class LoginAttemptServiceTest {
                 .thenReturn(Optional.empty());
     }
 
-    private void givenFailuresSince(LocalDateTime since, List<AccessEvent> failures) {
+    private void givenFailuresSince(Instant since, List<AccessEvent> failures) {
         when(accessRepository.findEventsAfter(
                 EMAIL, AccessEvent.STATUS_FAILED, since)).thenReturn(failures);
     }
@@ -90,18 +89,18 @@ class LoginAttemptServiceTest {
     @Test
     void remainingLock_recentSuccess_countsOnlyFailuresAfterIt() {
         when(accessRepository.findLastEventTime(EMAIL, AccessEvent.STATUS_SUCCESS))
-                .thenReturn(Optional.of(NOW.minusMinutes(2)));
-        givenFailuresSince(NOW.minusMinutes(2), failuresMinutesAgo(1));
+                .thenReturn(Optional.of(NOW.minus(Duration.ofMinutes(2))));
+        givenFailuresSince(NOW.minus(Duration.ofMinutes(2)), failuresMinutesAgo(1));
 
         assertThat(service.remainingLock(EMAIL)).isEmpty();
         verify(accessRepository).findEventsAfter(
-                EMAIL, AccessEvent.STATUS_FAILED, NOW.minusMinutes(2));
+                EMAIL, AccessEvent.STATUS_FAILED, NOW.minus(Duration.ofMinutes(2)));
     }
 
     @Test
     void remainingLock_successOlderThanWindow_usesWindowStart() {
         when(accessRepository.findLastEventTime(EMAIL, AccessEvent.STATUS_SUCCESS))
-                .thenReturn(Optional.of(NOW.minusMinutes(30)));
+                .thenReturn(Optional.of(NOW.minus(Duration.ofMinutes(30))));
         when(accessRepository.findEventsAfter(
                 any(), any(), any())).thenReturn(List.of());
 

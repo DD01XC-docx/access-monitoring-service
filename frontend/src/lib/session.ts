@@ -7,6 +7,11 @@ export function getSession(): Session | null {
   try {
     const token = localStorage.getItem(KEYS.token)
     if (!token) return null
+    //expired token: drop it here so protected pages never render with a dead session
+    if (isExpired(token)) {
+      clearSession()
+      return null
+    }
     return {
       token,
       username: localStorage.getItem(KEYS.username) ?? '',
@@ -14,6 +19,16 @@ export function getSession(): Session | null {
     }
   } catch {
     return null
+  }
+}
+
+//reads exp from the JWT payload; the signature is checked by the server, this is UX only
+function isExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+    return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now()
+  } catch {
+    return true
   }
 }
 

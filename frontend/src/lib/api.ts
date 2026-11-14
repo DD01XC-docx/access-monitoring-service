@@ -66,6 +66,7 @@ export type Profile = {
 
 //analytics payloads, shapes as returned by AccessController
 export type TimeRange = '1h' | '24h' | '7d'
+//categories are ISO-8601 UTC bucket starts
 export type ChartData = { categories: string[]; series: { name: string; data: number[] }[] }
 export type PointSeries<Y> = { series: { name: string; data: { x: string; y: Y }[] }[] }
 export type HealthItem = { x: string; y: number; status: 'UP' | 'DOWN' }
@@ -88,7 +89,8 @@ export const api = {
 
   activity: (range: TimeRange) => stat<ChartData>(`stat/hourly?range=${range}`),
   alertLevels: (range: TimeRange) => stat<ChartData>(`stat/alert-lvls?range=${range}`),
-  sla: () => stat<{ series: [number] }>('stat/sla'),
+  //empty series when there were no logins in range
+  sla: (range: TimeRange) => stat<{ series: number[] }>(`stat/sla?range=${range}`),
   topFailed: () => stat<ChartData>('stat/top-failed'),
   accounts: () => stat<PointSeries<number>>('stat/agent-status'),
   health: () => stat<HealthItem[]>('stat/health'),
