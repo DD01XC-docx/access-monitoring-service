@@ -7,7 +7,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # 2. backend
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:24-jdk AS build
 WORKDIR /app
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
@@ -18,7 +18,7 @@ COPY --from=web /web/dist frontend/dist
 RUN ./mvnw -q -B package -DskipTests -Dskip.installnodenpm -Dskip.npm
 
 # 3. runtime
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:24-jre
 WORKDIR /app
 RUN useradd --system --no-create-home amc
 COPY --from=build /app/target/*.jar app.jar
