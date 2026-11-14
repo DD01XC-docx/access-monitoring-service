@@ -36,9 +36,10 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- State 2026-11-14: Phase 0: PRs 1-2 merged. PR `build/spring-boot-4` (Trivy found 48 CRITICAL/HIGH on Boot 3.4.1, 0 after). Then rebase local `ci/security-scanning` (CodeQL, Dependabot, gitleaks, Trivy, SBOM; WIP commit, not pushed) onto main.
+- State 2026-11-14: Phase 0 last PR `ci/security-scanning` (CodeQL, Dependabot, gitleaks, Trivy gate, SBOM). After merge: Phase 1 plan (agent ingestion). Open: profile dates are locale strings, not ISO.
 - Product direction: AI agent monitoring ("AMC Agents"), brief in `docs/agent-monitoring.md`. Work phase by phase: plan, approval, then code. Open questions in its section 7 have proposed defaults, not decisions.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
+- Security workflows: `.github/workflows/{codeql,security}.yml`; reviewed gitleaks false positives go in `.gitleaksignore` (fingerprint), never disable rules. SBOM via Boot-managed CycloneDX plugin (no own config).
 - CI actions are pinned to commit SHAs with a `# vX.Y.Z` comment; resolve SHAs via `gh api`, never from memory.
 - Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off). Optional: README screenshot `docs/dashboard.png`.
 - Integration tests: `PostgresIntegrationTest` (`@SpringBootTest` + `@ServiceConnection` Postgres 16 container, `@Transactional` rollback); skipped without Docker.
