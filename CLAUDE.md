@@ -29,13 +29,15 @@ README.md covers API, config, structure, limitations — read only when needed, 
 - Lockout per email only (not email+IP), counted from `access_events`; locked attempts logged as `LOCKED` (not `FAILED`) so they do not extend the lock; response 429 + `Retry-After`. Duplicate signups log `REGISTER_FAILED` (must not count toward lockout). Login takes `pg_advisory_xact_lock(hashtext(email))` first (Postgres-only; H2 can't run it).
 - Analytics responses mask accounts and IPs (`util/Masking`, `AccessEventDTO`); DB keeps raw values. Never return entities from `/api/access/**`.
 - Failed-login analytics include unknown emails (filtering to existing accounts made the dashboard an account-existence oracle). SLA uses the selected range and the same rows as the activity chart.
-- `access_events.created_at` is `Instant`/`timestamptz`; chart buckets are ISO-8601 UTC, frontend formats in viewer zone. `init/TimestampMigration` is a one-off until Flyway.
+- `access_events.created_at` is `Instant`/`timestamptz`; chart buckets are ISO-8601 UTC, frontend formats in viewer zone.
+- Schema owned by Flyway (`db/migration`, `ddl-auto=validate`); every schema change is a new `V<n>__*.sql`, never edit applied ones. Pre-Flyway DBs baseline as V1. Testcontainers pinned to 1.21.4 (1.20.x from Boot 3.4.1 fails on Docker Engine 29+).
 - Endpoint typo `/api/access/stat/responce-time` kept: frontend `lib/api.ts` uses it.
 - UI copy in English; no fake testimonials/logos; landing numbers mirror real config.
 
 ## Next
-- State 2026-11-14: all work merged to `main` (PR #7 dashboard stats). Next: Phase 0 of `docs/agent-monitoring.md`. Hibernate `ddl-auto=update` already altered `created_at` to timestamptz on the dev DB, `TimestampMigration` was a no-op there.
+- State 2026-11-14: Phase 0 in progress: PR 1 `build/flyway-testcontainers` (Flyway + Testcontainers), next PR 2 CI workflow, PR 3 security scanning.
 - Product direction: AI agent monitoring ("AMC Agents"), brief in `docs/agent-monitoring.md`. Work phase by phase: plan, approval, then code. Open questions in its section 7 have proposed defaults, not decisions.
 - New SPA route: add to `SpaController` mapping AND `SPA_ROUTES`. Dashboard in `features/dashboard/` (lazy, 30s polling); landing preview is plain SVG to keep recharts out of main bundle.
-- Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off). Flyway, Testcontainers, CI moved to agent brief Phase 0. Optional: README screenshot `docs/dashboard.png`.
+- Todo: per-IP rate limit on `/api/auth/**`, `access_events` retention, ADMIN role, prod profile (CORS, trusted proxies, open-in-view off). CI is agent brief Phase 0. Optional: README screenshot `docs/dashboard.png`.
+- Integration tests: `PostgresIntegrationTest` (`@SpringBootTest` + `@ServiceConnection` Postgres 16 container, `@Transactional` rollback); skipped without Docker.
 - Web tests pattern: `@WebMvcTest(X.class) @Import(SecurityConfig.class)` + `@MockitoBean` for `JwtService`, `UserDetailsService` (see `controller/ProtectedEndpointsTest`).
