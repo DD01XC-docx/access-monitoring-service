@@ -1,0 +1,3 @@
+# Reviewed false positives only. Format: commit:file:rule:line
+# test-only base64 JWT key in an integration test, not a real secret
+97dd0b38268681e4fe65531226343eae6d122fc5:src/test/java/com/dd01xc/service/PostgresIntegrationTest.java:generic-api-key:25

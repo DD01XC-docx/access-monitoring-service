@@ -117,6 +117,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!--SBOM: version and config managed by Spring Boot; writes META-INF/sbom/application.cdx.json into the jar-->
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+            </plugin>
 
             <!--builds the React app; skip with -Dskip.installnodenpm -Dskip.npm-->
             <plugin>

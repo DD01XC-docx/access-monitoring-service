@@ -1,6 +1,8 @@
 # AMC — Access Monitoring Console
 
 [![CI](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/ci.yml/badge.svg)](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/codeql.yml/badge.svg)](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/codeql.yml)
+[![Security](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/security.yml/badge.svg)](https://github.com/DD01XC-docx/access-monitoring-service/actions/workflows/security.yml)
 
 Self-hosted service that records every authentication attempt, locks brute-force attacks and turns the audit trail into a live security dashboard.
 
@@ -142,6 +144,19 @@ Every endpoint except `/api/auth/**` requires `Authorization: Bearer <token>`.
 - DTO validation edge cases;
 - the web layer with the real security chain and JWT filter (401, 404 and 429 paths, SPA routing);
 - against a real PostgreSQL (Testcontainers): Flyway migrations, Hibernate schema validation and the native analytics SQL.
+
+## Supply-Chain Security
+
+Every pull request and push to `main` runs:
+
+| Check | Tool | Fails the build on |
+| --- | --- | --- |
+| Static analysis (Java, TypeScript) | CodeQL, `security-extended` queries | results shown in the Security tab |
+| Secrets in the full git history | gitleaks | any finding not reviewed in `.gitleaksignore` |
+| Docker image vulnerabilities | Trivy | CRITICAL or HIGH with a fix available |
+| Dependency updates | Dependabot (Maven, npm, Actions, Docker) | weekly PRs |
+
+The jar embeds a CycloneDX SBOM of the Maven dependencies (`META-INF/sbom/application.cdx.json`), also uploaded as a CI artifact. GitHub Actions are pinned to commit SHAs. CodeQL and Trivy re-run weekly.
 
 ## Project Structure
 
