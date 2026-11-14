@@ -79,7 +79,8 @@ npm --prefix frontend run dev
 ```
 
 - `./mvnw package` builds the React app into the jar. Add `-Dskip.installnodenpm -Dskip.npm` to skip the frontend build.
-- `./mvnw test` runs the backend tests. Mockito does not support JDK 25 yet, so use JDK 21.
+- `./mvnw test` runs the backend tests. Mockito does not support JDK 25 yet, so use JDK 21. Integration tests start PostgreSQL 16 with Testcontainers and are skipped when Docker is not running.
+- The schema is managed by Flyway (`src/main/resources/db/migration`); Hibernate only validates entities against it. A database created before Flyway is baselined as V1 on first start.
 
 ### Configuration
 
@@ -132,12 +133,13 @@ Every endpoint except `/api/auth/**` requires `Authorization: Bearer <token>`.
 ./mvnw test -Dskip.installnodenpm -Dskip.npm
 ```
 
-44 tests cover:
+54 tests cover:
 
 - auth service logic: lockout, timing equalization, and an inactive account getting the same response as a wrong password;
 - lockout window math with a fixed clock;
 - DTO validation edge cases;
-- the web layer with the real security chain and JWT filter (401, 404 and 429 paths, SPA routing).
+- the web layer with the real security chain and JWT filter (401, 404 and 429 paths, SPA routing);
+- against a real PostgreSQL (Testcontainers): Flyway migrations, Hibernate schema validation and the native analytics SQL.
 
 ## Project Structure
 
@@ -163,9 +165,8 @@ docker-compose.yml    App + PostgreSQL with health checks
 - No per-IP rate limiting on `/api/auth/**`. Signup reveals whether an email or username is taken.
 - `access_events` has no retention policy and grows without bound.
 - CORS is open to all origins, and `X-Forwarded-For` is trusted without a proxy allow-list.
-- The schema is managed by `ddl-auto=update`, with no migrations.
 - There is no role-based authorization beyond authenticated or anonymous.
-- No integration tests against a real PostgreSQL, so native queries and advisory locks are covered only by unit tests with mocks.
+- The login advisory lock and lockout queries are covered only by unit tests with mocks, not yet against a real PostgreSQL.
 
 ## Roadmap
 
@@ -174,8 +175,8 @@ docker-compose.yml    App + PostgreSQL with health checks
 - [x] React dashboard and landing page
 - [x] Single-jar build and Docker Compose deployment
 - [ ] Per-IP rate limiting
-- [ ] Testcontainers integration tests
-- [ ] Flyway migrations
+- [x] Testcontainers integration tests
+- [x] Flyway migrations
 - [ ] Admin role: disable accounts, browse full logs
 - [ ] Production profile (restricted CORS, trusted proxies)
 - [ ] CI pipeline

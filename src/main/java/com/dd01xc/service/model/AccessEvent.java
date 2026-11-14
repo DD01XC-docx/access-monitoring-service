@@ -30,7 +30,7 @@ public class AccessEvent {
     private String usernameOrEmail;
     @Column(nullable = false)
     private String status;
-    //UTC instant, stored as timestamptz (see init/TimestampMigration)
+    //UTC instant, stored as timestamptz
     @Column(nullable = false, columnDefinition = "timestamptz")
     private Instant createdAt;
     @Column(name = "ip_address")
